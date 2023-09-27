@@ -8,7 +8,7 @@ import Foundation
 import StoreKit
 
 // A protocol for handling product information retrieval.
-protocol ProductsInfoHandler {
+protocol ProductsInfoHandler: AnyObject {
     // A method to fetch product information for a set of product IDs.
     // - Parameters:
     //   - productIds: A set of product IDs to fetch information for.
@@ -19,9 +19,9 @@ protocol ProductsInfoHandler {
 }
 
 // A class that conforms to the `ProductsInfoHandler` protocol.
-class ProductInfoController: NSObject, ProductsInfoHandler {
+final class ProductInfoController: NSObject, ProductsInfoHandler {
     // An instance of `InAppProductFetcherBuilder` used to build product retrieval requests.
-    var fetchProductBuilder = InAppProductFetcherBuilder()
+    private var fetchProductBuilder = InAppProductFetcherBuilder()
 
     init(fetchProductBuilder: InAppProductFetcherBuilder = InAppProductFetcherBuilder()) {
         self.fetchProductBuilder = fetchProductBuilder
