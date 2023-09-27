@@ -8,45 +8,37 @@
 import Foundation
 import StoreKit
 
-// Protocol defining actions that can be performed on an in-app product request
+/// A protocol defining the fundamental actions for managing in-app purchase requests, allowing them to be started and canceled.
 protocol InAppRequestActions: AnyObject {
     func start()
     func cancel()
 }
 
-// Protocol extending InAppRequestActions and adding additional properties
+extension SKProductsRequest: InAppRequestActions{  }
+
+/// A protocol defining the requirements for an in-app product request, including actions to start and cancel the request, tracking completion status, and caching product information.
 protocol InAppProductRequest: InAppRequestActions {
     var isCompleted: Bool { get }
     var cachedProducts: Products? { get }
 }
 
-class FetchProduct : NSObject, SKProductsRequestDelegate, InAppProductRequest {
-    private var productCompletionHandler: ProductComplitionHandler?
-    private var productRequest: SKProductsRequest?
-
-    // Boolean to track if the request is completed
+/// A class responsible for fetching in-app products from the Apple Store and managing the product request lifecycle.
+final class FetchProduct : NSObject, InAppProductRequest {
+    var productCompletionHandler: ProductComplitionHandler?
+    var productRequest: SKProductsRequest?
+    
     var isCompleted: Bool = false
-
-    // Cached products result
     var cachedProducts: Products?
 
+    /// Initializes a FetchProduct instance with the specified product identifiers and a completion handler.
+    /// - Parameters:
+    ///   - productIds: A set of product identifiers for the requested in-app products.
+    ///   - productComplitionHandler: A closure to be called when the product request is completed.
     init(productIds: Set<String>, productComplitionHandler: @escaping ProductComplitionHandler) {
         super.init()
         self.productCompletionHandler = productComplitionHandler
         productRequest = SKProductsRequest(productIdentifiers: productIds)
         productRequest?.delegate = self
-    }
-
-    // SKProductsRequestDelegate method for handling successful responses
-    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        let retrievedProducts = response.products
-        let invalidProductIDs = response.invalidProductIdentifiers
-
-        let products = Products(retrievedProducts: Set(retrievedProducts), invalidProductIDs: Set(invalidProductIDs), error: nil)
-        cachedProducts = products
-        isCompleted = true
-        productCompletionHandler?(products)
-        productRequest = nil
     }
 
     // Method to start the product request
@@ -58,8 +50,28 @@ class FetchProduct : NSObject, SKProductsRequestDelegate, InAppProductRequest {
     func cancel() {
         productRequest?.cancel()
     }
+}
 
-    // SKRequestDelegate method for handling errors
+extension FetchProduct: SKProductsRequestDelegate {
+    /// Called when an SKProductsRequest receives a response containing product information.
+    /// - Parameters:
+    ///   - request: The SKProductsRequest that received the response.
+    ///   - response: The SKProductsResponse containing product information.
+    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+        let retrievedProducts = response.products
+        let invalidProductIDs = response.invalidProductIdentifiers
+
+        let products = Products(retrievedProducts: Set(retrievedProducts), invalidProductIDs: Set(invalidProductIDs), error: nil)
+        cachedProducts = products
+        isCompleted = true
+        productCompletionHandler?(products)
+        productRequest = nil
+    }
+
+    /// Called when an SKRequest encounters an error during execution.
+    /// - Parameters:
+    ///   - request: The SKRequest that encountered an error.
+    ///   - error: The error that occurred during the request.
     func request(_ request: SKRequest, didFailWithError error: Error) {
         let products = Products(retrievedProducts: nil, invalidProductIDs: nil, error: error)
         cachedProducts = products
@@ -68,4 +80,3 @@ class FetchProduct : NSObject, SKProductsRequestDelegate, InAppProductRequest {
         productRequest = nil
     }
 }
-
