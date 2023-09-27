@@ -1,14 +1,7 @@
-//
-//  PaymentsController.swift
-//  
-//
-//  Created by BJIT on 22/9/23.
-//
-
 import Foundation
 import StoreKit
 
-// Structure representing a payment
+/// Represents a payment for a product.
 struct Payment {
     let product: SKProduct         // The product being purchased
     let quantity: Int              // The quantity of the product (e.g., for consumable items)
@@ -16,35 +9,51 @@ struct Payment {
     var completion: (PurchaseResult) -> Void // Completion block to handle purchase result
 }
 
-// Enum representing the result of a purchase
+/// Enum representing the result of a purchase.
 enum PurchaseResult {
     case success
     case failure(error: Error?)
 }
 
-// Protocol defining transaction handling methods
+/// Protocol defining transaction handling methods.
 protocol TransactionController {
-    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: PaymentQueue) -> [SKPaymentTransaction]
+
+    /// Process an array of payment transactions.
+    ///
+    /// - Parameters:
+    ///   - transactions: An array of `SKPaymentTransaction` objects to be processed.
+    ///   - paymentQueue: The payment queue responsible for the transactions.
+    /// - Returns: An array of unhandled `SKPaymentTransaction` objects.
+    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: CustomPaymentQueue) -> [SKPaymentTransaction]
 }
 
-// Implementation of the transaction controller
-class PaymentsController: TransactionController {
+/// Implementation of the transaction controller.
+final class PaymentsController: TransactionController {
 
-    var payments: [Payment] = []          // Array to hold pending payments
-    var unhandledTransactions: [SKPaymentTransaction] = [] // Array to hold unhandled transactions
+    private var payments: [Payment] = []          // Array to hold pending payments
 
-    // Add a payment to the pending payments array
+    /// Add a payment to the pending payments array.
+    ///
+    /// - Parameter payment: The `Payment` object to be added.
     func append(_ payment: Payment) {
         payments.append(payment)
     }
 
-    // Find the corresponding payment for a transaction
+    /// Find the corresponding payment for a transaction.
+    ///
+    /// - Parameter transaction: The `SKPaymentTransaction` to find a payment for.
+    /// - Returns: The corresponding `Payment` object, if found.
     private func findPayment(for transaction: SKPaymentTransaction) -> Payment? {
         return payments.first { $0.product.productIdentifier == transaction.payment.productIdentifier }
     }
 
-    // Process a single transaction
-    func processTransaction(_ transaction: SKPaymentTransaction, on paymentQueue: PaymentQueue) -> Bool {
+    /// Process a single transaction.
+    ///
+    /// - Parameters:
+    ///   - transaction: The `SKPaymentTransaction` to be processed.
+    ///   - paymentQueue: The payment queue responsible for the transaction.
+    /// - Returns: `true` if the transaction was successfully handled; otherwise, `false`.
+    func processTransaction(_ transaction: SKPaymentTransaction, on paymentQueue: CustomPaymentQueue) -> Bool {
         switch transaction.transactionState {
         case .purchasing:
             // Transaction is being processed, no action needed for now
@@ -77,8 +86,13 @@ class PaymentsController: TransactionController {
         }
     }
 
-    // Process a batch of transactions
-    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: PaymentQueue) -> [SKPaymentTransaction] {
+    /// Process a batch of transactions.
+    ///
+    /// - Parameters:
+    ///   - transactions: An array of `SKPaymentTransaction` objects to be processed.
+    ///   - paymentQueue: The payment queue responsible for the transactions.
+    /// - Returns: An array of unhandled `SKPaymentTransaction` objects.
+    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: CustomPaymentQueue) -> [SKPaymentTransaction] {
         var unhandledTransactions: [SKPaymentTransaction] = []
 
         for transaction in transactions {
@@ -87,10 +101,6 @@ class PaymentsController: TransactionController {
                 unhandledTransactions.append(transaction)
             }
         }
-
-        // Store unhandled transactions in the property
-        self.unhandledTransactions = unhandledTransactions
-
         return unhandledTransactions
     }
 }
