@@ -24,7 +24,7 @@ protocol InAppProductRequest: InAppRequestActions {
 
 /// A class responsible for fetching in-app products from the Apple Store and managing the product request lifecycle.
 final class FetchProduct : NSObject, InAppProductRequest {
-    var productCompletionHandler: ProductComplitionHandler?
+    var productCompletionHandler: ProductCompletionHandler?
     var productRequest: SKProductsRequest?
     
     var isCompleted: Bool = false
@@ -34,9 +34,9 @@ final class FetchProduct : NSObject, InAppProductRequest {
     /// - Parameters:
     ///   - productIds: A set of product identifiers for the requested in-app products.
     ///   - productComplitionHandler: A closure to be called when the product request is completed.
-    init(productIds: Set<String>, productComplitionHandler: @escaping ProductComplitionHandler) {
+    init(productIds: Set<String>, productCompletionHandler: @escaping ProductCompletionHandler) {
         super.init()
-        self.productCompletionHandler = productComplitionHandler
+        self.productCompletionHandler = productCompletionHandler
         productRequest = SKProductsRequest(productIdentifiers: productIds)
         productRequest?.delegate = self
     }
