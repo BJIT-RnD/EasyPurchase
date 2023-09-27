@@ -43,7 +43,7 @@ extension SKPaymentQueue: CustomPaymentQueue { }
 /// Manages in-app purchase transactions and coordinates payment-related operations.
 final class PaymentQueueController: NSObject {
     private let paymentsController: PaymentsController
-    unowned let paymentQueue: CustomPaymentQueue
+    private let paymentQueue: CustomPaymentQueue
 
     /// Initializes a PaymentObserver with the specified payments controller and payment queue.
     /// - Parameters:
