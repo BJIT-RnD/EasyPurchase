@@ -15,7 +15,7 @@ protocol ProductsInfoHandler: AnyObject {
     //   - completion: A closure that takes a `Products` object as its parameter
     //     and is called when the product information retrieval is completed.
     // - Returns: An `InAppProductRequest` object that can be used to start the request.
-    func fetchProductsInfo(_ productIds: Set<String>, completion: @escaping (Products) -> Void) -> InAppProductRequest
+    func fetchProductsInfo(_ productIds: Set<String>, completion: @escaping (Product) -> Void) -> InAppProductRequest
 }
 
 // A class that conforms to the `ProductsInfoHandler` protocol.
@@ -29,7 +29,7 @@ final class ProductInfoController: NSObject, ProductsInfoHandler {
 
     // Implementation of the `fetchProductsInfo` method as required by the protocol.
     // It initiates the product retrieval request and returns an `InAppProductRequest` object.
-    func fetchProductsInfo(_ productIds: Set<String>, completion: @escaping (Products) -> Void) -> InAppProductRequest {
+    func fetchProductsInfo(_ productIds: Set<String>, completion: @escaping (Product) -> Void) -> InAppProductRequest {
         // Use the builder to create the request, passing in the product IDs and completion closure.
         return fetchProductBuilder.request(productIds: productIds, callback: completion)
     }
