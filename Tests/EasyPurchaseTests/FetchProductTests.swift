@@ -4,100 +4,66 @@
 //
 //  Created by BJIT on 29/9/23.
 //
-
 import XCTest
-import StoreKitTest
+import StoreKit
 @testable import EasyPurchase
+// Custom structure to represent a mock product
+struct MockProduct {
+    let productIdentifier: String
+    // Add other properties as needed for testing
+}
 
-class FetchProductTests: XCTestCase {
+// Create an extension to convert MockProduct to SKProduct
+extension MockProduct {
+    func asSKProduct() -> SKProduct {
+        let mockProduct = SKProduct()
+        // Set the productIdentifier property
+        mockProduct.setValue(productIdentifier, forKey: "productIdentifier")
+        // Set other properties if needed for testing
+        return mockProduct
+    }
+}
 
-    // Create a test double for InAppProductFetcherBuilder
-    class MockFetchProductBuilder: InAppProductFetcherBuilder {
-        override func request(productIds: Set<String>, callback: @escaping ProductCompletionHandler) -> InAppProductRequest {
-            return MockInAppProductRequest(productIds: productIds, productCompletionHandler: callback)
-        }
+class ProductInfoControllerTestsDemo: XCTestCase {
+    var productInfoController: ProductInfoController!
+
+    override func setUp() {
+        super.setUp()
+        // Create an instance of the ProductInfoController
+        productInfoController = ProductInfoController()
     }
 
-    // Mock Products
-    class MockSKProduct: SKProduct {
-        private var mockProductIdentifier: String
-
-        override var productIdentifier: String {
-            return mockProductIdentifier
-        }
-
-        // Initialize the mock SKProduct with the necessary information
-        init(productIdentifier: String) {
-            self.mockProductIdentifier = productIdentifier
-            super.init()
-        }
-    }
-
-    // Create a test double for InAppProductRequest
-    class MockInAppProductRequest: InAppProductRequest {
-        var isCompleted: Bool = false
-        var cachedProducts: Product?
-        var productCompletionHandler: ProductCompletionHandler?
-
-        init(productIds: Set<String>, productCompletionHandler: @escaping ProductCompletionHandler) {
-            self.productCompletionHandler = productCompletionHandler
-        }
-
-        func start() {
-            // Simulate the start of the product request
-            isCompleted = false
-        }
-
-        func cancel() {
-            // Simulate the cancellation of the product request
-            isCompleted = true
-        }
+    override func tearDown() {
+        // Clean up resources if needed
+        productInfoController = nil
+        super.tearDown()
     }
 
     func testFetchProductsInfo() {
-        // Create a ProductInfoController instance with the mock fetch product builder
-        let productInfoController = ProductInfoController(fetchProductBuilder: MockFetchProductBuilder())
-        var req: InAppProductRequest!
+        let expectation = XCTestExpectation(description: "Product fetch completed")
 
-        // Define the expected product identifiers
-        let productIdentifiers: Set<String> = ["com.bjitgroup.easypurchase.consumable.tencoin", "com.bjitgroup.easypurchase.consumable.twentycoin"]
+        // Trigger the fetchProductsInfo method
+        let expectedProductIdentifier = "com.bjitgroup.easypurchase.consumable.tencoin"
 
-        // Create an expectation for the completion handler
-        let expectation = XCTestExpectation(description: "Product info fetch failed")
-
-        // Perform the product info fetch
-        req = productInfoController.fetchProductsInfo(productIdentifiers) { product in
-            // Verify the product response
-            XCTAssertNotNil(product)
-            XCTAssertEqual(product.retrievedProducts?.count, 2) // Adjust as needed
-            XCTAssertNil(product.invalidProductIDs)
+        // Trigger the fetchProductsInfo method
+        let productIds: Set<String> = [expectedProductIdentifier]
+        let productReq = productInfoController.fetchProductsInfo(productIds) { product in
+            // Verify the product identifier
+            if let retrievedProductIdentifier = product.retrievedProducts?.first?.productIdentifier {
+                // Check if the retrieved identifier is a valid non-empty string
+                XCTAssertTrue(!retrievedProductIdentifier.isEmpty)
+                // You can add more specific criteria here if needed
+            } else {
+                XCTFail("No product identifier retrieved")
+            }
+            XCTAssertEqual(product.retrievedProducts?.first?.productIdentifier, expectedProductIdentifier)
+            XCTAssertEqual(product.invalidProductIDs, [])
             XCTAssertNil(product.error)
-
-            // Fulfill the expectation
             expectation.fulfill()
         }
-        req.start()
+        productReq.start()
 
-        // Simulate the response by calling the completion handler of the mock request
-        if let mockRequest = productInfoController.fetchProductBuilder.request(productIds: productIdentifiers, callback: { _ in }) as? MockInAppProductRequest {
-
-            // Create mock SKProduct instances (replace with your actual mock products)
-            let mockProduct1 = MockSKProduct(productIdentifier: "com.bjitgroup.easypurchase.consumable.tencoin")
-
-            let mockProduct2 = MockSKProduct(productIdentifier: "com.bjitgroup.easypurchase.consumable.twentycoin")
-
-            // Set the retrieved products in the mock response
-            mockRequest.cachedProducts = Product(
-                retrievedProducts: Set([mockProduct1, mockProduct2]),
-                invalidProductIDs: nil,
-                error: nil
-            )
-
-            mockRequest.isCompleted = true
-            mockRequest.productCompletionHandler?(mockRequest.cachedProducts!)
-        }
-
-        // Wait for the expectation to be fulfilled (adjust the timeout as needed)
-        wait(for: [expectation], timeout: 10.0)
+        // Wait for the expectation to be fulfilled (or timeout)
+        wait(for: [expectation], timeout: 5.0)
     }
 }
