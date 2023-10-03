@@ -7,12 +7,12 @@
 import Foundation
 import StoreKit
 // Define a typealias for a product completion handler closure.
-typealias ProductCompletionHandler = (Product) -> Void
+public typealias ProductCompletionHandler = (Product) -> Void
 
 // MARK: Protocols
 
 // A protocol for a product request builder.
-protocol FetchProductBuilder: AnyObject {
+public protocol FetchProductBuilder: AnyObject {
     // A method to create and initiate a product retrieval request.
     // - Parameters:
     //   - productIds: A set of product IDs to fetch information for.
@@ -25,7 +25,7 @@ protocol FetchProductBuilder: AnyObject {
 // MARK: Classes
 
 // A class that implements the `FetchProductBuilder` protocol.
-class InAppProductFetcherBuilder: FetchProductBuilder {
+public class InAppProductFetcherBuilder: FetchProductBuilder {
     // Implementation of the `request` method as required by the protocol.
     // It creates an `InAppProductRequest` object for product retrieval.
     func request(productIds: Set<String>, callback: @escaping ProductCompletionHandler) -> InAppProductRequest {

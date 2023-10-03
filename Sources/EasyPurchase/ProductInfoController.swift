@@ -19,7 +19,7 @@ protocol ProductsInfoHandler: AnyObject {
 }
 
 // A class that conforms to the `ProductsInfoHandler` protocol.
-final class ProductInfoController: NSObject, ProductsInfoHandler {
+public class ProductInfoController: NSObject, ProductsInfoHandler {
     // An instance of `InAppProductFetcherBuilder` used to build product retrieval requests.
     private var fetchProductBuilder = InAppProductFetcherBuilder()
 

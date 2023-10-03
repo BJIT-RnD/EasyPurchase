@@ -9,7 +9,7 @@ import Foundation
 import StoreKit
 
 /// A protocol defining the fundamental actions for managing in-app purchase requests, allowing them to be started and canceled.
-protocol InAppRequestActions: AnyObject {
+public protocol InAppRequestActions: AnyObject {
     func start()
     func cancel()
 }
@@ -17,7 +17,7 @@ protocol InAppRequestActions: AnyObject {
 extension SKProductsRequest: InAppRequestActions{  }
 
 /// A protocol defining the requirements for an in-app product request, including actions to start and cancel the request, tracking completion status, and caching product information.
-protocol InAppProductRequest: InAppRequestActions {
+public protocol InAppProductRequest: InAppRequestActions {
     var isCompleted: Bool { get }
     var cachedProducts: Product? { get }
 }
