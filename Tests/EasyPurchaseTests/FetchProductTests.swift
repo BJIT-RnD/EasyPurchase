@@ -39,7 +39,7 @@ class ProductInfoControllerTestsDemo: XCTestCase {
         super.tearDown()
     }
 
-    func testFetchProductsInfo() {
+    func testFetchProductWithValidIdentifier() {
         let expectation = XCTestExpectation(description: "Product fetch completed")
 
         // Trigger the fetchProductsInfo method
