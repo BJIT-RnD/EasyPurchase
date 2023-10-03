@@ -29,6 +29,7 @@ public class InAppProductFetcherBuilder: FetchProductBuilder {
     // Implementation of the `request` method as required by the protocol.
     // It creates an `InAppProductRequest` object for product retrieval.
     public init() {}
+    var abcd : Int = 5
     public func request(productIds: Set<String>, callback: @escaping ProductCompletionHandler) -> InAppProductRequest {
         // Create and return an `InAppProductRequest` with the provided product IDs and callback.
         return FetchProduct(productIds: productIds, productCompletionHandler: callback)
