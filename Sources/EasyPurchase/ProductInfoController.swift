@@ -21,15 +21,15 @@ protocol ProductsInfoHandler: AnyObject {
 // A class that conforms to the `ProductsInfoHandler` protocol.
 public class ProductInfoController: NSObject, ProductsInfoHandler {
     // An instance of `InAppProductFetcherBuilder` used to build product retrieval requests.
-    private var fetchProductBuilder = InAppProductFetcherBuilder()
+    public var fetchProductBuilder = InAppProductFetcherBuilder()
 
-    init(fetchProductBuilder: InAppProductFetcherBuilder = InAppProductFetcherBuilder()) {
+    public init(fetchProductBuilder: InAppProductFetcherBuilder = InAppProductFetcherBuilder()) {
         self.fetchProductBuilder = fetchProductBuilder
     }
 
     // Implementation of the `fetchProductsInfo` method as required by the protocol.
     // It initiates the product retrieval request and returns an `InAppProductRequest` object.
-    func fetchProductsInfo(_ productIds: Set<String>, completion: @escaping (Product) -> Void) -> InAppProductRequest {
+    public func fetchProductsInfo(_ productIds: Set<String>, completion: @escaping (Product) -> Void) -> InAppProductRequest {
         // Use the builder to create the request, passing in the product IDs and completion closure.
         return fetchProductBuilder.request(productIds: productIds, callback: completion)
     }

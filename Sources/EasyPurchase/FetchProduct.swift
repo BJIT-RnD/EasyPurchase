@@ -23,10 +23,10 @@ public protocol InAppProductRequest: InAppRequestActions {
 }
 
 /// A class responsible for fetching in-app products from the Apple Store and managing the product request lifecycle.
-final class FetchProduct : NSObject, InAppProductRequest {
+class FetchProduct : NSObject, InAppProductRequest {
     var productCompletionHandler: ProductCompletionHandler?
     var productRequest: SKProductsRequest?
-    
+
     var isCompleted: Bool = false
     var cachedProducts: Product?
 
