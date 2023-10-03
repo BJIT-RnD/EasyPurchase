@@ -7,24 +7,11 @@
 import XCTest
 import StoreKit
 @testable import EasyPurchase
-// Custom structure to represent a mock product
-struct MockProduct {
-    let productIdentifier: String
-    // Add other properties as needed for testing
-}
 
-// Create an extension to convert MockProduct to SKProduct
-extension MockProduct {
-    func asSKProduct() -> SKProduct {
-        let mockProduct = SKProduct()
-        // Set the productIdentifier property
-        mockProduct.setValue(productIdentifier, forKey: "productIdentifier")
-        // Set other properties if needed for testing
-        return mockProduct
-    }
-}
-
-class ProductInfoControllerTestsDemo: XCTestCase {
+// ProductInfoControllerTestsDemo is a test case class designed to test the functionality
+// of the ProductInfoController class. It contains a test case that verifies the behavior of
+// fetching a product with a valid identifier.
+class FetchProductTests: XCTestCase {
     var productInfoController: ProductInfoController!
 
     override func setUp() {
