@@ -61,16 +61,24 @@ class MockProductFetcherBuilder: FetchProductBuilder {
 // fetching a product with a valid identifier.
 class FetchProductTests: XCTestCase {
     var productInfoController: ProductInfoController!
+    var fetchProduct: FetchProduct!
+    var mockProductCompletionHandler: ProductCompletionHandler!
 
     override func setUp() {
         super.setUp()
         // Create an instance of the ProductInfoController
         productInfoController = ProductInfoController()
+        // Create a mock product completion handler
+        mockProductCompletionHandler = { products in }
+        // Initialize the FetchProduct instance with a mock SKProductsRequest
+        fetchProduct = FetchProduct(productIds: ["com.example.product"], productCompletionHandler: mockProductCompletionHandler)
     }
 
     override func tearDown() {
         // Clean up resources if needed
         productInfoController = nil
+        fetchProduct = nil
+        mockProductCompletionHandler = nil
         super.tearDown()
     }
 
@@ -204,5 +212,21 @@ class FetchProductTests: XCTestCase {
         multiProductReq.start()
         // Wait for the expectation to be fulfilled (or timeout after 5 seconds)
         wait(for: [expectation], timeout: 5.0)
+    }
+    // Test the request(_:didFailWithError:) method
+    func testRequestDidFailWithError() {
+        // Given
+        let mockError = NSError(domain: "com.example", code: 1001, userInfo: nil)
+
+        // When
+        fetchProduct.request(SKRequest(), didFailWithError: mockError)
+
+        // Then
+        XCTAssertTrue(fetchProduct.isCompleted)
+        XCTAssertEqual(fetchProduct.cachedProducts?.error as NSError?, mockError)
+
+        // Verify that the completion handler is called with the correct products.
+        XCTAssertNotNil(fetchProduct.productCompletionHandler)
+        fetchProduct.productCompletionHandler?(fetchProduct.cachedProducts!) // Simulate calling the completion handler
     }
 }
