@@ -11,15 +11,15 @@ import StoreKit
 public struct InAppProduct {
     // A set of retrieved products (SKProduct) if the operation was successful,
     // otherwise, it will be nil.
-    let retrievedProducts: Set<SKProduct>?
+    public let retrievedProducts: Set<SKProduct>?
 
     // A set of invalid product IDs, which couldn't be retrieved, if any.
     // If the operation was successful for all products, this will be nil.
-    let invalidProductIDs: Set<String>?
+    public let invalidProductIDs: Set<String>?
 
     // An error object that holds any errors encountered during the retrieval
     // operation. If the operation was successful, this will be nil.
-    let error: Error?
+    public let error: Error?
 }
 
 
