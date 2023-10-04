@@ -7,7 +7,7 @@
 import Foundation
 import StoreKit
 // Define a typealias for a product completion handler closure.
-public typealias ProductCompletionHandler = (Product) -> Void
+public typealias ProductCompletionHandler = (InAppProduct) -> Void
 
 // MARK: Protocols
 

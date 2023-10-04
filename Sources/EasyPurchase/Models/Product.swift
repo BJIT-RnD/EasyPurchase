@@ -8,7 +8,7 @@ import Foundation
 import StoreKit
 
 // A struct to represent the result of a product retrieval operation.
-public struct Product {
+public struct InAppProduct {
     // A set of retrieved products (SKProduct) if the operation was successful,
     // otherwise, it will be nil.
     let retrievedProducts: Set<SKProduct>?

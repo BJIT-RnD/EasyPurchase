@@ -19,7 +19,7 @@ extension SKProductsRequest: InAppRequestActions{  }
 /// A protocol defining the requirements for an in-app product request, including actions to start and cancel the request, tracking completion status, and caching product information.
 public protocol InAppProductRequest: InAppRequestActions {
     var isCompleted: Bool { get }
-    var cachedProducts: Product? { get }
+    var cachedProducts: InAppProduct? { get }
 }
 
 /// A class responsible for fetching in-app products from the Apple Store and managing the product request lifecycle.
@@ -28,7 +28,7 @@ class FetchProduct : NSObject, InAppProductRequest {
     var productRequest: SKProductsRequest?
 
     var isCompleted: Bool = false
-    var cachedProducts: Product?
+    var cachedProducts: InAppProduct?
 
     /// Initializes a FetchProduct instance with the specified product identifiers and a completion handler.
     /// - Parameters:
@@ -61,7 +61,7 @@ extension FetchProduct: SKProductsRequestDelegate {
         let retrievedProducts = response.products
         let invalidProductIDs = response.invalidProductIdentifiers
 
-        let products = Product(retrievedProducts: Set(retrievedProducts), invalidProductIDs: Set(invalidProductIDs), error: nil)
+        let products = InAppProduct(retrievedProducts: Set(retrievedProducts), invalidProductIDs: Set(invalidProductIDs), error: nil)
         cachedProducts = products
         isCompleted = true
         productCompletionHandler?(products)
@@ -73,7 +73,7 @@ extension FetchProduct: SKProductsRequestDelegate {
     ///   - request: The SKRequest that encountered an error.
     ///   - error: The error that occurred during the request.
     func request(_ request: SKRequest, didFailWithError error: Error) {
-        let products = Product(retrievedProducts: nil, invalidProductIDs: nil, error: error)
+        let products = InAppProduct(retrievedProducts: nil, invalidProductIDs: nil, error: error)
         cachedProducts = products
         isCompleted = true
         productCompletionHandler?(products)
