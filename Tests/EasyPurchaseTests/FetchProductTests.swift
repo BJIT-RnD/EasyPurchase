@@ -198,11 +198,11 @@ class FetchProductTests: XCTestCase {
         // Perform the multiple product fetch using the productInfoController
         let multiProductReq = productInfoController.fetchProductsInfo(productIds) { product in
             // Verify that retrieved products are not nil
-            XCTAssertNil(product.retrievedProducts)
+            XCTAssertNotNil(product.retrievedProducts)
             // Ensure that the number of retrieved products is not equal to the expected count
             XCTAssertEqual(product.retrievedProducts?.count, productIds.count)
             // Verify that there are invalid product identifiers reported
-            XCTAssertNotEqual(product.invalidProductIDs, [])
+            XCTAssertEqual(product.invalidProductIDs, [])
             // Ensure that no error occurred during the fetch
             XCTAssertNil(product.error)
             // Fulfill the expectation to signal the completion of the test
