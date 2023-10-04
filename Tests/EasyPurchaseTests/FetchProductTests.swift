@@ -228,5 +228,8 @@ class FetchProductTests: XCTestCase {
         // Verify that the completion handler is called with the correct products.
         XCTAssertNotNil(fetchProduct.productCompletionHandler)
         fetchProduct.productCompletionHandler?(fetchProduct.cachedProducts!) // Simulate calling the completion handler
+        // Check that retrievedProducts & invalidProductIDs arrays are nil
+        XCTAssertNil(fetchProduct.cachedProducts?.retrievedProducts)
+        XCTAssertNil(fetchProduct.cachedProducts?.invalidProductIDs)
     }
 }
