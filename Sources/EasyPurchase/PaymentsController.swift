@@ -30,13 +30,13 @@ public protocol TransactionController {
 /// Implementation of the transaction controller.
 public class PaymentsController: TransactionController {
 
-    private var payments: [Payment] = []          // Array to hold pending payments
+    public var payments: [Payment] = []          // Array to hold pending payments
     public init() { }
 
     /// Add a payment to the pending payments array.
     ///
     /// - Parameter payment: The `Payment` object to be added.
-    func append(_ payment: Payment) {
+    public func append(_ payment: Payment) {
         payments.append(payment)
     }
 
