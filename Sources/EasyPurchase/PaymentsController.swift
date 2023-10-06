@@ -2,21 +2,21 @@ import Foundation
 import StoreKit
 
 /// Represents a payment for a product.
-struct Payment {
-    let product: SKProduct         // The product being purchased
-    let quantity: Int              // The quantity of the product (e.g., for consumable items)
-    var needToDownloadContent: Bool // Indicates whether content needs to be downloaded after purchase
-    var completion: (PurchaseResult) -> Void // Completion block to handle purchase result
+public struct Payment {
+    public let product: SKProduct         // The product being purchased
+    public let quantity: Int              // The quantity of the product (e.g., for consumable items)
+    public var needToDownloadContent: Bool // Indicates whether content needs to be downloaded after purchase
+    public var completion: (PurchaseResult) -> Void // Completion block to handle purchase result
 }
 
 /// Enum representing the result of a purchase.
-enum PurchaseResult {
+public enum PurchaseResult {
     case success
     case failure(error: Error?)
 }
 
 /// Protocol defining transaction handling methods.
-protocol TransactionController {
+public protocol TransactionController {
 
     /// Process an array of payment transactions.
     ///
@@ -28,9 +28,10 @@ protocol TransactionController {
 }
 
 /// Implementation of the transaction controller.
-final class PaymentsController: TransactionController {
+public class PaymentsController: TransactionController {
 
     private var payments: [Payment] = []          // Array to hold pending payments
+    public init() { }
 
     /// Add a payment to the pending payments array.
     ///
@@ -92,7 +93,7 @@ final class PaymentsController: TransactionController {
     ///   - transactions: An array of `SKPaymentTransaction` objects to be processed.
     ///   - paymentQueue: The payment queue responsible for the transactions.
     /// - Returns: An array of unhandled `SKPaymentTransaction` objects.
-    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: CustomPaymentQueue) -> [SKPaymentTransaction] {
+    public func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: CustomPaymentQueue) -> [SKPaymentTransaction] {
         var unhandledTransactions: [SKPaymentTransaction] = []
 
         for transaction in transactions {

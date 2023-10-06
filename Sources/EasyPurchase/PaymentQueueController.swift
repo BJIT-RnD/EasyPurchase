@@ -9,7 +9,7 @@ import Foundation
 import StoreKit
 
 /// A protocol defining methods for customizing the behavior of a payment queue.
-protocol CustomPaymentQueue: AnyObject {
+public protocol CustomPaymentQueue: AnyObject {
     /// Adds an observer to the custom payment queue.
     /// - Parameter observer: The observer to be added to the payment queue.
     func add(_ observer: SKPaymentTransactionObserver)
@@ -19,7 +19,7 @@ protocol CustomPaymentQueue: AnyObject {
 }
 
 /// Defines methods for handling in-app purchase transaction outcomes and processing transactions.
-protocol PaymentQueueDelegate: AnyObject {
+public protocol PaymentQueueDelegate: AnyObject {
     /// Handles successful transactions for a specific product.
     /// - Parameter productIdentifier: The identifier of the successfully purchased product.
     func handleTransactionSuccess(for productIdentifier: String)
@@ -41,15 +41,15 @@ protocol PaymentQueueDelegate: AnyObject {
 extension SKPaymentQueue: CustomPaymentQueue { }
 
 /// Manages in-app purchase transactions and coordinates payment-related operations.
-final class PaymentQueueController: NSObject {
-    private let paymentsController: PaymentsController
+public class PaymentQueueController: NSObject {
+    private var paymentsController = PaymentsController()
     private let paymentQueue: CustomPaymentQueue
 
     /// Initializes a PaymentObserver with the specified payments controller and payment queue.
     /// - Parameters:
     ///   - paymentsController: The PaymentsController responsible for managing payment transactions.
     ///   - paymentQueue: The payment queue to observe for updates. Defaults to the system's default payment queue.
-    init(paymentsController: PaymentsController = PaymentsController(), paymentQueue: CustomPaymentQueue = SKPaymentQueue.default()) {
+    public init(paymentsController: PaymentsController = PaymentsController(), paymentQueue: CustomPaymentQueue = SKPaymentQueue.default()) {
         self.paymentsController = paymentsController
         self.paymentQueue = paymentQueue
         super.init()
@@ -77,7 +77,7 @@ extension PaymentQueueController: SKPaymentTransactionObserver {
     /// - Parameters:
     ///   - queue: The payment queue responsible for the transactions.
     ///   - transactions: An array of updated payment transactions.
-    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+    public func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
         // Process the transactions and retrieve any unhandled transactions
         let unhandledTransactions = paymentsController.processTransactions(transactions, on: paymentQueue)
 
