@@ -31,7 +31,7 @@ public protocol TransactionController {
     ///   - transactions: An array of `SKPaymentTransaction` objects to be processed.
     ///   - paymentQueue: The payment queue responsible for the transactions.
     /// - Returns: An array of unhandled `SKPaymentTransaction` objects.
-    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: CustomPaymentQueue) -> [SKPaymentTransaction]
+    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: InAppPaymentQueue) -> [SKPaymentTransaction]
 }
 
 /// Implementation of the transaction controller.
@@ -61,7 +61,7 @@ public class PaymentsController: TransactionController {
     ///   - transaction: The `SKPaymentTransaction` to be processed.
     ///   - paymentQueue: The payment queue responsible for the transaction.
     /// - Returns: `true` if the transaction was successfully handled; otherwise, `false`.
-    func processTransaction(_ transaction: SKPaymentTransaction, on paymentQueue: CustomPaymentQueue) -> Bool {
+    func processTransaction(_ transaction: SKPaymentTransaction, on paymentQueue: InAppPaymentQueue) -> Bool {
         switch transaction.transactionState {
         case .purchasing:
             // Transaction is being processed, no action needed for now
@@ -100,7 +100,7 @@ public class PaymentsController: TransactionController {
     ///   - transactions: An array of `SKPaymentTransaction` objects to be processed.
     ///   - paymentQueue: The payment queue responsible for the transactions.
     /// - Returns: An array of unhandled `SKPaymentTransaction` objects.
-    public func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: CustomPaymentQueue) -> [SKPaymentTransaction] {
+    public func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: InAppPaymentQueue) -> [SKPaymentTransaction] {
         var unhandledTransactions: [SKPaymentTransaction] = []
 
         for transaction in transactions {

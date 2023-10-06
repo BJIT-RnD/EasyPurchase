@@ -9,7 +9,7 @@ import Foundation
 import StoreKit
 
 /// A protocol defining methods for customizing the behavior of a payment queue.
-public protocol CustomPaymentQueue: AnyObject {
+public protocol InAppPaymentQueue: AnyObject {
     /// Adds an observer to the custom payment queue.
     /// - Parameter observer: The observer to be added to the payment queue.
     func add(_ observer: SKPaymentTransactionObserver)
@@ -35,21 +35,21 @@ public protocol PaymentQueueDelegate: AnyObject {
     ///   - transactions: An array of payment transactions to be processed.
     ///   - paymentQueue: The payment queue responsible for the transactions.
     /// - Returns: An array of unhandled transactions that need further processing.
-    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: CustomPaymentQueue) -> [SKPaymentTransaction]
+    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: InAppPaymentQueue) -> [SKPaymentTransaction]
 }
 
-extension SKPaymentQueue: CustomPaymentQueue { }
+extension SKPaymentQueue: InAppPaymentQueue { }
 
 /// Manages in-app purchase transactions and coordinates payment-related operations.
 public class PaymentQueueController: NSObject {
     private var paymentsController = PaymentsController()
-    private let paymentQueue: CustomPaymentQueue
+    private let paymentQueue: InAppPaymentQueue
 
     /// Initializes a PaymentObserver with the specified payments controller and payment queue.
     /// - Parameters:
     ///   - paymentsController: The PaymentsController responsible for managing payment transactions.
     ///   - paymentQueue: The payment queue to observe for updates. Defaults to the system's default payment queue.
-    public init(paymentsController: PaymentsController = PaymentsController(), paymentQueue: CustomPaymentQueue = SKPaymentQueue.default()) {
+    public init(paymentsController: PaymentsController = PaymentsController(), paymentQueue: InAppPaymentQueue = SKPaymentQueue.default()) {
         self.paymentsController = paymentsController
         self.paymentQueue = paymentQueue
         super.init()
