@@ -59,7 +59,7 @@ public class PaymentQueueController: NSObject {
 
     /// Initiates a payment transaction for the specified product.
     /// - Parameter payment: The Payment object containing the product to be purchased and its quantity.
-    func startPayment(_ payment: Payment) {
+    public func startPayment(_ payment: Payment) {
         // Create an SKMutablePayment object using the product and quantity from the Payment object.
         let skPayment = SKMutablePayment(product: payment.product)
         skPayment.quantity = payment.quantity
