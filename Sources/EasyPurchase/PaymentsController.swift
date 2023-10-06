@@ -7,6 +7,13 @@ public struct Payment {
     public let quantity: Int              // The quantity of the product (e.g., for consumable items)
     public var needToDownloadContent: Bool // Indicates whether content needs to be downloaded after purchase
     public var completion: (PurchaseResult) -> Void // Completion block to handle purchase result
+
+    public init(product: SKProduct, quantity: Int = 0, needToDownloadContent: Bool, completion: @escaping (PurchaseResult) -> Void) {
+        self.product = product
+        self.quantity = quantity
+        self.needToDownloadContent = needToDownloadContent
+        self.completion = completion
+    }
 }
 
 /// Enum representing the result of a purchase.
