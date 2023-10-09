@@ -16,6 +16,9 @@ protocol CustomPaymentQueue: AnyObject {
     /// Adds a payment to the custom payment queue.
     /// - Parameter payment: The payment to be added to the payment queue.
     func add(_ payment: SKPayment)
+    /// Removes an observer to the custom payment queue
+    /// - Parameter payment:  The observer to be removed to the payment queue..
+    func remove(_ observer: SKPaymentTransactionObserver)
 }
 
 /// Defines methods for handling in-app purchase transaction outcomes and processing transactions.
