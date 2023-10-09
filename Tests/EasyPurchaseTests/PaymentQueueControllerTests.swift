@@ -65,12 +65,19 @@ final class PaymentQueueControllerTests: XCTestCase {
         XCTAssertNotNil(mockPaymentQueue.addedObserver)
     }
 
-    func testStartTransaction() {
-        let paymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
-        /// `TO DO:` CREATE TEST PAYMENT
-        /// `TO DO:` CREATE TEST PRODUCT
-        let payment = Payment(product: SKProduct(), quantity: 1, needToDownloadContent: false) { _ in }
-        paymentQueueController.startPayment(payment)
+    func testStartPaymentSuccess() {
+        let mockTransaction = SKPaymentTransaction()
+        let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
+        let transactions = [mockTransaction]
+
+        let payment = mockPayment(productIdentifier: "com.bjitgroup.easypurchase.consumable.tencoin") { _ in }
+        mockPaymentQueueController.startPayment(payment)
         XCTAssertEqual(mockPaymentQueue.addedPayment.count, 1)
+    }
+
+    func mockPayment(productIdentifier: String, quantity:Int = 1, needToDownloadContent: Bool = true, completion: @escaping (PurchaseResult) -> Void) -> Payment {
+        let mockProduct = MockProduct(productIdentifier: productIdentifier)
+
+        return Payment(product: mockProduct, quantity: quantity, needToDownloadContent: needToDownloadContent, completion: completion)
     }
 }
