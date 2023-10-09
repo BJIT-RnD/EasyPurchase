@@ -63,10 +63,8 @@ public class PaymentQueueController: NSObject {
         // Create an SKMutablePayment object using the product and quantity from the Payment object.
         let skPayment = SKMutablePayment(product: payment.product)
         skPayment.quantity = payment.quantity
-        // Retrieve the default payment queue.
-        let defaultQueue = SKPaymentQueue.default()
         // Add the payment to the payment queue.
-        defaultQueue.add(skPayment)
+        paymentQueue.add(skPayment)
         // Append the payment to the paymentsController for tracking.
         paymentsController.append(payment)
     }
