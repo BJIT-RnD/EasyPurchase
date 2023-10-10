@@ -82,6 +82,46 @@ final class PaymentQueueControllerTests: XCTestCase {
         paymentQueueController.paymentQueue(SKPaymentQueue(), updatedTransactions: transaction)
     }
 
+    /// Test case to check when `shouldAddStorePaymentCompletion` is nil and `shouldAddStorePayment` returns false
+    func testPaymentQueueWhenShouldAddStorePaymentCompletionNilAndShouldAddStorePaymentReturnFalse() {
+        // Create an instance of PaymentQueueController with a mock PaymentQueue
+        let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
+
+        /// Set `shouldAddStorePaymentCompletion` to nil
+        mockPaymentQueueController.shouldAddStorePaymentCompletion = nil
+
+        /// Assert that `paymentQueue` returns false when `shouldAddStorePayment` is called
+        XCTAssertFalse(mockPaymentQueueController.paymentQueue(SKPaymentQueue(), shouldAddStorePayment: SKPayment(), for: MockProduct(productIdentifier: "")))
+    }
+
+    /// Test case to check when `shouldAddStorePaymentCompletion` returns true and `shouldAddStorePayment` returns true
+    func testPaymentQueueWhenShouldAddStorePaymentCompletionReturnTrueAndShouldAddStorePaymentReturnTrue() {
+        /// Create an instance of `PaymentQueueController` with a mock PaymentQueue
+        let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
+
+        /// Set `shouldAddStorePaymentCompletion` to a closure that always returns true
+        mockPaymentQueueController.shouldAddStorePaymentCompletion = { payment, product in
+            return true
+        }
+
+        /// Assert that `paymentQueue` returns true when `shouldAddStorePayment` is called
+        XCTAssertTrue(mockPaymentQueueController.paymentQueue(SKPaymentQueue(), shouldAddStorePayment: SKPayment(), for: MockProduct(productIdentifier: "")))
+    }
+
+    /// Test case to check when `shouldAddStorePaymentCompletion` returns false and `shouldAddStorePayment` returns false
+    func testPaymentQueueWhenShouldAddStorePaymentCompletionReturnFalseAndShouldAddStorePaymentReturnFalse() {
+        /// Create an instance of PaymentQueueController with a mock PaymentQueue
+        let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
+
+        /// Set `shouldAddStorePaymentCompletion` to a closure that always returns false
+        mockPaymentQueueController.shouldAddStorePaymentCompletion = { payment, product in
+            return false
+        }
+
+        /// Assert that `paymentQueue` returns false when `shouldAddStorePayment` is called
+        XCTAssertFalse(mockPaymentQueueController.paymentQueue(SKPaymentQueue(), shouldAddStorePayment: SKPayment(), for: MockProduct(productIdentifier: "")))
+    }
+
     func mockPayment(productIdentifier: String, quantity:Int = 1, needToDownloadContent: Bool = true, completion: @escaping (PurchaseResult) -> Void) -> Payment {
         let mockProduct = MockProduct(productIdentifier: productIdentifier)
 
