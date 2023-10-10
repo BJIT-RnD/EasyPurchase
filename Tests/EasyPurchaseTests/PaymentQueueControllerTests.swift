@@ -52,9 +52,7 @@ final class PaymentQueueControllerTests: XCTestCase {
     }
 
     func testPaymentQueueCallbacks_whenHandlingTransactions() {
-        let mockTransaction = SKPaymentTransaction()
         let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
-        let transactions = [mockTransaction]
 
         let purchasedProductIdentifier = "com.bjitgroup.easypurchase.consumable.tencoin"
         let failedProductIdentifier = "com.bjitgroup.easypurchase.consumable.twentycoin"
@@ -81,7 +79,7 @@ final class PaymentQueueControllerTests: XCTestCase {
             XCTAssertTrue(isPaymentCallbackCalled)
         }
         paymentQueueController.startPayment(mockPayment)
-        paymentQueueController.paymentQueue(SKPaymentQueue(), updatedTransactions: transactions)
+        paymentQueueController.paymentQueue(SKPaymentQueue(), updatedTransactions: transaction)
     }
 
     func mockPayment(productIdentifier: String, quantity:Int = 1, needToDownloadContent: Bool = true, completion: @escaping (PurchaseResult) -> Void) -> Payment {
