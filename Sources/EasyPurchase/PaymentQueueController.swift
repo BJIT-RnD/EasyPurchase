@@ -8,6 +8,9 @@
 import Foundation
 import StoreKit
 
+// typealias for a closure that takes an SKPayment and SKProduct as input parameters and returns a Bool
+public typealias ShouldAddStorePaymentCompletion = (_ payment: SKPayment, _ product: SKProduct) -> Bool
+
 /// A protocol defining methods for customizing the behavior of a payment queue.
 protocol CustomPaymentQueue: AnyObject {
     /// Adds an observer to the custom payment queue.
@@ -44,6 +47,7 @@ extension SKPaymentQueue: CustomPaymentQueue { }
 final class PaymentQueueController: NSObject {
     private let paymentsController: PaymentsController
     private let paymentQueue: CustomPaymentQueue
+    var shouldAddStorePaymentCompletion: ShouldAddStorePaymentCompletion?
 
     /// Initializes a PaymentObserver with the specified payments controller and payment queue.
     /// - Parameters:
@@ -100,4 +104,10 @@ extension PaymentQueueController: SKPaymentTransactionObserver {
             }
         }
     }
+    // Calls the `shouldAddStorePaymentCompletion` closure, passing the provided `SKPayment` and `SKProduct` as parameters,
+    // and returns its result. If the closure is nil, it defaults to false.
+    func paymentQueue(_ queue: SKPaymentQueue, shouldAddStorePayment payment: SKPayment, for product: SKProduct) -> Bool {
+        return shouldAddStorePaymentCompletion?(payment, product) ?? false
+    }
+
 }
