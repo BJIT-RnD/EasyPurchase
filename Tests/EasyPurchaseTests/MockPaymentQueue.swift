@@ -7,6 +7,7 @@
 
 import Foundation
 import StoreKit
+@testable import EasyPurchase
 
 /// Define a mock payment queue that conforms to the `InAppPaymentQueue` protocol
 class MockPaymentQueue: InAppPaymentQueue {
