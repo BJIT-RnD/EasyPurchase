@@ -2,21 +2,28 @@ import Foundation
 import StoreKit
 
 /// Represents a payment for a product.
-struct Payment {
-    let product: SKProduct         // The product being purchased
-    let quantity: Int              // The quantity of the product (e.g., for consumable items)
-    var needToDownloadContent: Bool // Indicates whether content needs to be downloaded after purchase
-    var completion: (PurchaseResult) -> Void // Completion block to handle purchase result
+public struct Payment {
+    public let product: SKProduct         // The product being purchased
+    public let quantity: Int              // The quantity of the product (e.g., for consumable items)
+    public var needToDownloadContent: Bool // Indicates whether content needs to be downloaded after purchase
+    public var completion: (PurchaseResult) -> Void // Completion block to handle purchase result
+
+    public init(product: SKProduct, quantity: Int = 0, needToDownloadContent: Bool, completion: @escaping (PurchaseResult) -> Void) {
+        self.product = product
+        self.quantity = quantity
+        self.needToDownloadContent = needToDownloadContent
+        self.completion = completion
+    }
 }
 
 /// Enum representing the result of a purchase.
-enum PurchaseResult {
+public enum PurchaseResult {
     case success(purchase: Payment)
     case failure(error: SKError)
 }
 
 /// Protocol defining transaction handling methods.
-protocol TransactionController {
+public protocol TransactionController {
 
     /// Process an array of payment transactions.
     ///
@@ -24,18 +31,19 @@ protocol TransactionController {
     ///   - transactions: An array of `SKPaymentTransaction` objects to be processed.
     ///   - paymentQueue: The payment queue responsible for the transactions.
     /// - Returns: An array of unhandled `SKPaymentTransaction` objects.
-    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: CustomPaymentQueue) -> [SKPaymentTransaction]
+    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: InAppPaymentQueue) -> [SKPaymentTransaction]
 }
 
 /// Implementation of the transaction controller.
-final class PaymentsController: TransactionController {
+public class PaymentsController: TransactionController {
 
-    private var payments: [Payment] = []          // Array to hold pending payments
+    public var payments: [Payment] = []          // Array to hold pending payments
+    public init() { }
 
     /// Add a payment to the pending payments array.
     ///
     /// - Parameter payment: The `Payment` object to be added.
-    func append(_ payment: Payment) {
+    public func append(_ payment: Payment) {
         payments.append(payment)
     }
 
@@ -53,22 +61,25 @@ final class PaymentsController: TransactionController {
     ///   - transaction: The `SKPaymentTransaction` to be processed.
     ///   - paymentQueue: The payment queue responsible for the transaction.
     /// - Returns: `true` if the transaction was successfully handled; otherwise, `false`.
-    func processTransaction(_ transaction: SKPaymentTransaction, on paymentQueue: CustomPaymentQueue) -> Bool {
+    func processTransaction(_ transaction: SKPaymentTransaction, on paymentQueue: InAppPaymentQueue) -> Bool {
         switch transaction.transactionState {
         case .purchasing:
             // Transaction is being processed, no action needed for now
             return true
 
         case .purchased:
-            // Transaction was successful, unlock content or provide the purchased item
-            let payment = findPayment(for: transaction)
-            payment?.completion(.success)
-            return true
+            if let payment = findPayment(for: transaction) {
+                payment.completion(.success(purchase: payment))
+                return true
+            } else {
+                // Handle the case when 'findPayment' returns nil
+                return false
+            }
 
         case .failed:
-            // Transaction failed, handle the error and potentially provide a way for the user to retry
+            print("failed")
             let payment = findPayment(for: transaction)
-            payment?.completion(.failure(error: transaction.error))
+            payment?.completion(.failure(error: transaction.error as! SKError))
             return false
 
         case .restored:
@@ -92,7 +103,7 @@ final class PaymentsController: TransactionController {
     ///   - transactions: An array of `SKPaymentTransaction` objects to be processed.
     ///   - paymentQueue: The payment queue responsible for the transactions.
     /// - Returns: An array of unhandled `SKPaymentTransaction` objects.
-    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: CustomPaymentQueue) -> [SKPaymentTransaction] {
+    public func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: InAppPaymentQueue) -> [SKPaymentTransaction] {
         var unhandledTransactions: [SKPaymentTransaction] = []
 
         for transaction in transactions {
