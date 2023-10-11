@@ -68,15 +68,18 @@ public class PaymentsController: TransactionController {
             return true
 
         case .purchased:
-            // Transaction was successful, unlock content or provide the purchased item
-            let payment = findPayment(for: transaction)
-            payment?.completion(.success)
-            return true
+            if let payment = findPayment(for: transaction) {
+                payment.completion(.success(purchase: payment))
+                return true
+            } else {
+                // Handle the case when 'findPayment' returns nil
+                return false
+            }
 
         case .failed:
-            // Transaction failed, handle the error and potentially provide a way for the user to retry
+            print("failed")
             let payment = findPayment(for: transaction)
-            payment?.completion(.failure(error: transaction.error))
+            payment?.completion(.failure(error: transaction.error as! SKError))
             return false
 
         case .restored:
