@@ -18,8 +18,8 @@ public struct Payment {
 
 /// Enum representing the result of a purchase.
 public enum PurchaseResult {
-    case success
-    case failure(error: Error?)
+    case success(purchase: Payment)
+    case failure(error: SKError)
 }
 
 /// Protocol defining transaction handling methods.
