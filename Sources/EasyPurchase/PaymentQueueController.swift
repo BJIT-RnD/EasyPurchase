@@ -11,6 +11,25 @@ import StoreKit
 // typealias for a closure that takes an SKPayment and SKProduct as input parameters and returns a Bool
 public typealias ShouldAddStorePaymentCompletion = (_ payment: SKPayment, _ product: SKProduct) -> Bool
 
+// MARK: - 'Purchase' STRUCT
+struct Purchase {
+    let productId: String
+    let quantity: Int
+    let transaction: PaymentTransaction
+    let originalTransaction: PaymentTransaction?
+    let needsFinishTransaction: Bool
+    
+    init(productId: String, quantity: Int, transaction: PaymentTransaction, originalTransaction: PaymentTransaction?, needsFinishTransaction: Bool) {
+        self.productId = productId
+        self.quantity = quantity
+        self.transaction = transaction
+        self.originalTransaction = originalTransaction
+        self.needsFinishTransaction = needsFinishTransaction
+    }
+}
+
+extension SKPaymentTransaction: PaymentTransaction { }
+
 /// A protocol defining methods for customizing the behavior of a payment queue.
 public protocol InAppPaymentQueue: AnyObject {
     /// Adds an observer to the custom payment queue.
@@ -22,6 +41,8 @@ public protocol InAppPaymentQueue: AnyObject {
     /// Removes an observer to the custom payment queue
     /// - Parameter payment:  The observer to be removed to the payment queue..
     func remove(_ observer: SKPaymentTransactionObserver)
+    
+    func finishTransaction(_ transaction: SKPaymentTransaction)
 }
 
 /// Defines methods for handling in-app purchase transaction outcomes and processing transactions.
@@ -51,14 +72,16 @@ public class PaymentQueueController: NSObject {
     private var paymentsController = PaymentsController()
     private let paymentQueue: InAppPaymentQueue
     var shouldAddStorePaymentCompletion: ShouldAddStorePaymentCompletion?
+    private let completeTransactionsController: CompleteTransactionController
     
     /// Initializes a PaymentObserver with the specified payments controller and payment queue.
     /// - Parameters:
     ///   - paymentsController: The PaymentsController responsible for managing payment transactions.
     ///   - paymentQueue: The payment queue to observe for updates. Defaults to the system's default payment queue.
-    public init(paymentsController: PaymentsController = PaymentsController(), paymentQueue: InAppPaymentQueue = SKPaymentQueue.default()) {
+    public init(paymentsController: PaymentsController = PaymentsController(), paymentQueue: InAppPaymentQueue, completeTransactionsController: CompleteTransactionController) {
         self.paymentsController = paymentsController
         self.paymentQueue = paymentQueue
+        self.completeTransactionsController = completeTransactionsController
         super.init()
         // Add the PaymentObserver to the specified payment queue for observation.
         paymentQueue.add(self)
@@ -75,6 +98,13 @@ public class PaymentQueueController: NSObject {
         // Append the payment to the paymentsController for tracking.
         paymentsController.append(payment)
     }
+    
+    func completeTransactions(_ completeTransactions: ProcessedTransactions) {
+        guard completeTransactionsController.processedTransactions == nil else {
+            return
+        }
+        completeTransactionsController.processedTransactions = completeTransactions
+    }
 }
 
 extension PaymentQueueController: SKPaymentTransactionObserver {
@@ -83,26 +113,16 @@ extension PaymentQueueController: SKPaymentTransactionObserver {
     ///   - queue: The payment queue responsible for the transactions.
     ///   - transactions: An array of updated payment transactions.
     public func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        // Process the transactions and retrieve any unhandled transactions
-        let unhandledTransactions = paymentsController.processTransactions(transactions, on: paymentQueue)
-
-        // Iterate through unhandled transactions and handle them accordingly
-        for transaction in unhandledTransactions {
-            switch transaction.transactionState {
-            case .purchased:
-                // Handle a successful transaction, e.g., deliver the purchased content
-                let productIdentifier = transaction.payment.productIdentifier
-                queue.finishTransaction(transaction)
-
-            case .failed:
-                // Handle a failed transaction, e.g., inform the user of the failure
-                let productIdentifier = transaction.payment.productIdentifier
-                queue.finishTransaction(transaction)
-
-            default:
-                // Additional handling for other transaction states may be required in the future
-                break
-            }
+        var rawTransactions = transactions.filter { $0.transactionState != .purchasing }
+        if !rawTransactions.isEmpty {
+            // Process the transactions and retrieve any unhandled transactions
+            rawTransactions = paymentsController.processTransactions(transactions, on: paymentQueue)
+            rawTransactions = completeTransactionsController.processTransactions(rawTransactions, on: paymentQueue)
+        }
+        
+        if !rawTransactions.isEmpty {
+            let string = rawTransactions.map { $0.debugDescription }.joined(separator: "/n")
+            print("RawTransaction ♦️: /n \(string)")
         }
     }
     
