@@ -78,7 +78,7 @@ public class PaymentQueueController: NSObject {
     /// - Parameters:
     ///   - paymentsController: The PaymentsController responsible for managing payment transactions.
     ///   - paymentQueue: The payment queue to observe for updates. Defaults to the system's default payment queue.
-    public init(paymentsController: PaymentsController = PaymentsController(), paymentQueue: InAppPaymentQueue, completeTransactionsController: CompleteTransactionController) {
+    init(paymentsController: PaymentsController = PaymentsController(), paymentQueue: InAppPaymentQueue = SKPaymentQueue.default(), completeTransactionsController: CompleteTransactionController = CompleteTransactionController()) {
         self.paymentsController = paymentsController
         self.paymentQueue = paymentQueue
         self.completeTransactionsController = completeTransactionsController

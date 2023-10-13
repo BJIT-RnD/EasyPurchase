@@ -27,7 +27,7 @@ public class CompleteTransactionController: TransactionController {
     // MARK: - PROPERTIES
     var processedTransactions: ProcessedTransactions?
     var purchases: [Purchase] = []
-    var unhandledTransactions: [SKPaymentTransaction] = []
+    var rawTransactions: [SKPaymentTransaction] = []
     
     public func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: InAppPaymentQueue) -> [SKPaymentTransaction] {
         guard let processedTransactions = processedTransactions else {
@@ -45,13 +45,13 @@ public class CompleteTransactionController: TransactionController {
                     paymentQueue.finishTransaction(transaction)
                 }
             } else {
-                unhandledTransactions.append(transaction)
+                rawTransactions.append(transaction)
             }
         }
         
         if !purchases.isEmpty {
             processedTransactions.completion(purchases)
         }
-        return unhandledTransactions
+        return rawTransactions
     }
 }
