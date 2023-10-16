@@ -38,7 +38,7 @@ public class CompleteTransactionController: TransactionController {
             let transactionState = transaction.transactionState
             if transactionState != .purchasing {
                 let willFinishTransaction = transactionState == .failed
-                let purchase = Purchase(productId: transaction.payment.productIdentifier, quantity: transaction.payment.quantity, transaction: transaction, originalTransaction: transaction.original, needsFinishTransaction: !willFinishTransaction)
+                let purchase = Purchase(productId: transaction.payment.productIdentifier, quantity: transaction.payment.quantity, product: nil, transaction: transaction, originalTransaction: transaction.original, needsFinishTransaction: !willFinishTransaction)
                 purchases.append(purchase)
                 
                 if willFinishTransaction {
