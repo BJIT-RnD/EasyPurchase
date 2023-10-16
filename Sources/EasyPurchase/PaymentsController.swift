@@ -71,10 +71,9 @@ public class PaymentsController: TransactionController {
             if let payment = findPayment(for: transaction) {
                 payment.completion(.success(purchase: payment))
                 return true
-            } else {
-                // Handle the case when 'findPayment' returns nil
-                return false
             }
+            // Handle the case when 'findPayment' returns nil
+            return false
 
         case .failed:
             print("failed")
