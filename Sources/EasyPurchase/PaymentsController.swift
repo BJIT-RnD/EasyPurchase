@@ -85,8 +85,13 @@ public class PaymentsController: TransactionController {
         case .restored:
             // Transaction was restored (e.g., for a previously purchased non-consumable)
             // You may want to unlock content or provide the restored item
-            return true
-
+            if let payment = findPayment(for: transaction) {
+                payment.completion(.success(purchase: payment))
+                return true
+            } else {
+                // Handle the case when 'findPayment' returns nil
+                return false
+            }
         case .deferred:
             // Transaction is in a deferred state (e.g., for family sharing)
             // Handle as needed based on your app's requirements
