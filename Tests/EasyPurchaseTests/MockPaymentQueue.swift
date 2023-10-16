@@ -11,6 +11,10 @@ import StoreKit
 
 /// Define a mock payment queue that conforms to the `InAppPaymentQueue` protocol
 class MockPaymentQueue: InAppPaymentQueue {
+    func restoreCompletedTransactions(withApplicationUsername username: String?) {
+        //
+    }
+
     // MARK: - PROPERTIES
     var addedObserver: SKPaymentTransactionObserver?
     var addedPayment: [SKPayment] = []

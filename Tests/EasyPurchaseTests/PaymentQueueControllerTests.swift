@@ -47,9 +47,66 @@ final class PaymentQueueControllerTests: XCTestCase {
         let transactions = [mockTransaction]
 
         let payment = mockPayment(productIdentifier: "com.bjitgroup.easypurchase.consumable.tencoin") { _ in }
-        mockPaymentQueueController.startPayment(payment)
+        do {
+            try mockPaymentQueueController.startPayment(payment)
+        }
+        catch let error as NSError {
+            // Handle the error and access error information
+            print("Payment failed with error: \(error.localizedDescription)")
+            print("Error code: \(error.code)")
+            print("Error domain: \(error.domain)")
+            XCTAssertEqual(error.localizedDescription, "Invalid payment quantity: Must be greater than zero")
+        }
+        catch {
+            // handle other errors here
+        }
         XCTAssertEqual(mockPaymentQueue.addedPayment.count, 1)
     }
+    
+    func testPaymentQuantityGreaterThanZeroSuccess() {
+        let mockTransaction = SKPaymentTransaction()
+        let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
+        let transactions = [mockTransaction]
+
+        let payment = mockPayment(productIdentifier: "com.bjitgroup.easypurchase.consumable.tencoin", quantity: 1) { _ in }
+        do {
+            try mockPaymentQueueController.startPayment(payment)
+        }
+        catch let error as NSError {
+            // Handle the error and access error information
+            print("Payment failed with error: \(error.localizedDescription)")
+            print("Error code: \(error.code)")
+            print("Error domain: \(error.domain)")
+            XCTAssertEqual(error.localizedDescription, "Invalid payment quantity: Must be greater than zero")
+        }
+        catch {
+            // handle other errors here
+        }
+        XCTAssertEqual(mockPaymentQueue.addedPayment.count, 1)
+    }
+
+    func testPaymentQuantityEqualToZeroSuccess() {
+        let mockTransaction = SKPaymentTransaction()
+        let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
+        let transactions = [mockTransaction]
+
+        let payment = mockPayment(productIdentifier: "com.bjitgroup.easypurchase.consumable.tencoin", quantity: 0) { _ in }
+        do {
+            try mockPaymentQueueController.startPayment(payment)
+        }
+        catch let error as NSError {
+            // Handle the error and access error information
+            print("Payment failed with error: \(error.localizedDescription)")
+            print("Error code: \(error.code)")
+            print("Error domain: \(error.domain)")
+            XCTAssertEqual(error.localizedDescription, "Invalid payment quantity: Must be greater than zero")
+        }
+        catch {
+            // handle other errors here
+        }
+        XCTAssertEqual(mockPaymentQueue.addedPayment.count, 0)
+    }
+
 
     func testPaymentQueueCallbacks_whenHandlingTransactions() {
         let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
@@ -78,7 +135,20 @@ final class PaymentQueueControllerTests: XCTestCase {
             }
             XCTAssertTrue(isPaymentCallbackCalled)
         }
-        paymentQueueController.startPayment(mockPayment)
+        do {
+            try mockPaymentQueueController.startPayment(mockPayment)
+        }
+        catch let error as NSError {
+            // Handle the error and access error information
+            print("Payment failed with error: \(error.localizedDescription)")
+            print("Error code: \(error.code)")
+            print("Error domain: \(error.domain)")
+            XCTAssertEqual(error.localizedDescription, "Invalid payment quantity: Must be greater than zero")
+        }
+        catch {
+            // handle other errors here
+        }
+
         paymentQueueController.paymentQueue(SKPaymentQueue(), updatedTransactions: transaction)
     }
 
