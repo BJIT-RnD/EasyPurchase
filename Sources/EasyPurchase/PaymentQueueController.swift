@@ -112,10 +112,14 @@ public class PaymentQueueController: NSObject {
         }
     }
     
+    /// A method to complete transactions by setting the `processedTransactions` property in the `completeTransactionsController`.
+    /// - Parameter completeTransactions: A `ProcessedTransactions` instance representing a completion closure.
     func completeTransactions(_ completeTransactions: ProcessedTransactions) {
+        /// Ensure that the `processedTransactions` property is not already set.
         guard completeTransactionsController.processedTransactions == nil else {
             return
         }
+        /// Set the `processedTransactions` property to the provided `completeTransactions`.
         completeTransactionsController.processedTransactions = completeTransactions
     }
 }
@@ -133,12 +137,8 @@ extension PaymentQueueController: SKPaymentTransactionObserver {
             rawTransactions = paymentsController.processTransactions(transactions, on: paymentQueue)
             rawTransactions = completeTransactionsController.processTransactions(rawTransactions, on: paymentQueue)
         }
-        
-        if !rawTransactions.isEmpty {
-            let string = rawTransactions.map { $0.debugDescription }.joined(separator: "/n")
-        }
     }
-    
+
     // Calls the `shouldAddStorePaymentCompletion` closure, passing the provided `SKPayment` and `SKProduct` as parameters,
     // and returns its result. If the closure is nil, it defaults to false.
     public func paymentQueue(_ queue: SKPaymentQueue, shouldAddStorePayment payment: SKPayment, for product: SKProduct) -> Bool {
