@@ -62,6 +62,9 @@ public protocol InAppPaymentQueue: AnyObject {
     func remove(_ observer: SKPaymentTransactionObserver)
     
     func finishTransaction(_ transaction: SKPaymentTransaction)
+
+    // Added for restoration management
+    func restoreCompletedTransactions(withApplicationUsername username: String?)
 }
 
 extension SKPaymentQueue: InAppPaymentQueue { }
@@ -71,15 +74,17 @@ public class PaymentQueueController: NSObject {
     private var paymentsController = PaymentsController()
     private let paymentQueue: InAppPaymentQueue
     var shouldAddStorePaymentCompletion: ShouldAddStorePaymentCompletion?
+    private let restoreProductsController: RestoreProductsController
     private let completeTransactionsController: CompleteTransactionController
     
     /// Initializes a PaymentObserver with the specified payments controller and payment queue.
     /// - Parameters:
     ///   - paymentsController: The PaymentsController responsible for managing payment transactions.
     ///   - paymentQueue: The payment queue to observe for updates. Defaults to the system's default payment queue.
-    init(paymentsController: PaymentsController = PaymentsController(), paymentQueue: InAppPaymentQueue = SKPaymentQueue.default(), completeTransactionsController: CompleteTransactionController = CompleteTransactionController()) {
+    init(paymentsController: PaymentsController = PaymentsController(), paymentQueue: InAppPaymentQueue = SKPaymentQueue.default(), restoreProductsController: RestoreProductsController = RestoreProductsController(), completeTransactionsController: CompleteTransactionController = CompleteTransactionController()) {
         self.paymentsController = paymentsController
         self.paymentQueue = paymentQueue
+        self.restoreProductsController = restoreProductsController
         self.completeTransactionsController = completeTransactionsController
         super.init()
         // Add the PaymentObserver to the specified payment queue for observation.
@@ -116,12 +121,12 @@ extension PaymentQueueController: SKPaymentTransactionObserver {
         if !rawTransactions.isEmpty {
             // Process the transactions and retrieve any unhandled transactions
             rawTransactions = paymentsController.processTransactions(transactions, on: paymentQueue)
+            rawTransactions = paymentsController.processTransactions(transactions, on: paymentQueue)
             rawTransactions = completeTransactionsController.processTransactions(rawTransactions, on: paymentQueue)
         }
         
         if !rawTransactions.isEmpty {
             let string = rawTransactions.map { $0.debugDescription }.joined(separator: "/n")
-            print("RawTransaction ♦️: /n \(string)")
         }
     }
     
@@ -129,5 +134,44 @@ extension PaymentQueueController: SKPaymentTransactionObserver {
     // and returns its result. If the closure is nil, it defaults to false.
     public func paymentQueue(_ queue: SKPaymentQueue, shouldAddStorePayment payment: SKPayment, for product: SKProduct) -> Bool {
         return shouldAddStorePaymentCompletion?(payment, product) ?? false
+    }
+
+    /**
+     Restores in-app purchases with the provided 'RestoreProducts' configuration.
+
+     - Parameters:
+         - restorePurchases: An instance of 'RestoreProducts' that contains the necessary information for the restoration process.
+
+     This function is responsible for initiating the restoration of previously purchased in-app products and subscriptions. It follows a clear sequence of steps:
+
+     1. **Duplicate Request Check:** Initially, it checks whether a restoration process is already underway. If the `restoreProductsController.restoreProducts` is not `nil`, it indicates an ongoing restoration process, and further action is unnecessary to prevent redundant requests.
+
+     2. **Initiate Restoration:** If no restoration process is currently in progress, it proceeds to initiate the restoration process by calling `paymentQueue.restoreCompletedTransactions(withApplicationUsername: restorePurchases.appUserName)`. This method triggers a request to Apple's payment system to restore completed transactions associated with the provided application username. This is a crucial step for users to regain access to their previously purchased items.
+
+     3. **Update Restore Products Controller:** Following the initiation of the restoration, the function sets `restoreProductsController.restoreProducts` to the provided `restorePurchases` object. This assignment serves as an indicator that a restoration process is in progress, preventing additional restoration requests until the current one has completed.
+
+     It is essential to ensure that this function is invoked when users explicitly request to restore their previous in-app purchases, allowing them to recover their purchased content. Additionally, it assumes that a valid 'RestoreProducts' configuration is provided for a seamless restoration process.
+    */
+    public func restorePurchases(_ restorePurchases: RestoreProducts) {
+
+        if restoreProductsController.restoreProducts != nil {
+            return
+        }
+
+        paymentQueue.restoreCompletedTransactions(withApplicationUsername: restorePurchases.appUserName)
+
+        restoreProductsController.restoreProducts = restorePurchases
+    }
+
+    /**
+     Signals the completion of restoring in-app transactions within the payment queue.
+
+     - Parameters:
+         - queue: The 'SKPaymentQueue' instance representing the payment queue's state.
+
+     This function is automatically triggered when the payment queue finishes restoring completed in-app transactions. It promptly calls the 'restoreCompletedTransactionsFinished()' method on the 'restorePurchasesController' object to conclude the restoration process and perform any necessary post-restoration tasks.
+    */
+    public func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
+        restoreProductsController.restoreCompletedTransactionsFinished()
     }
 }
