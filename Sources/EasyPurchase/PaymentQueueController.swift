@@ -12,21 +12,40 @@ import StoreKit
 public typealias ShouldAddStorePaymentCompletion = (_ payment: SKPayment, _ product: SKProduct) -> Bool
 
 // MARK: - 'Purchase' STRUCT
-struct Purchase {
+public struct Purchase {
     let productId: String
     let quantity: Int
+    let product: SKProduct? //??
     let transaction: PaymentTransaction
     let originalTransaction: PaymentTransaction?
     let needsFinishTransaction: Bool
     
-    init(productId: String, quantity: Int, transaction: PaymentTransaction, originalTransaction: PaymentTransaction?, needsFinishTransaction: Bool) {
+    init(productId: String, quantity: Int, product: SKProduct?, transaction: PaymentTransaction, originalTransaction: PaymentTransaction?, needsFinishTransaction: Bool) {
         self.productId = productId
         self.quantity = quantity
+        self.product = product
         self.transaction = transaction
         self.originalTransaction = originalTransaction
         self.needsFinishTransaction = needsFinishTransaction
     }
 }
+
+// This Swift enumeration, 'InAppTransactionActionsResult', serves as a clear and structured representation of the potential outcomes for in-app transactions. It effectively categorizes the different states that a transaction can assume, allowing for easy handling and communication of transaction results.
+
+public enum InAppTransactionActionsResult {
+    // When a user successfully purchases an in-app item, this case is used to denote the purchase action, and it includes a reference to the associated 'Purchase' object, providing access to transaction details.
+    case purchased(purchase: Purchase)
+
+    // For the restoration of previous purchases, such as when a user reinstalls the app or switches devices, this case is employed. It also includes a reference to the 'Purchase' object for accessing restored transaction details.
+    case restored(purchase: Purchase)
+
+    // In cases where a transaction is in a deferred state, typically seen with auto-renewable subscriptions requiring user interaction or validation, this case indicates the deferred state, and it includes the 'Purchase' object for convenient access to related transaction details.
+    case deferred(purchase: Purchase)
+
+    // If a transaction fails, this case communicates the failure and includes an 'SKError' object to capture and handle the specific error details.
+    case failed(error: SKError)
+}
+
 
 extension SKPaymentTransaction: PaymentTransaction { }
 
@@ -43,26 +62,6 @@ public protocol InAppPaymentQueue: AnyObject {
     func remove(_ observer: SKPaymentTransactionObserver)
     
     func finishTransaction(_ transaction: SKPaymentTransaction)
-}
-
-/// Defines methods for handling in-app purchase transaction outcomes and processing transactions.
-public protocol PaymentQueueDelegate: AnyObject {
-    /// Handles successful transactions for a specific product.
-    /// - Parameter productIdentifier: The identifier of the successfully purchased product.
-    func handleTransactionSuccess(for productIdentifier: String)
-
-    /// Handles failed transactions for a specific product.
-    /// - Parameters:
-    ///   - productIdentifier: The identifier of the product that encountered an error.
-    ///   - error: An optional error object describing the failure.
-    func handleTransactionFailure(for productIdentifier: String, with error: Error?)
-
-    /// Processes and manages in-app purchase transactions.
-    /// - Parameters:
-    ///   - transactions: An array of payment transactions to be processed.
-    ///   - paymentQueue: The payment queue responsible for the transactions.
-    /// - Returns: An array of unhandled transactions that need further processing.
-    func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: InAppPaymentQueue) -> [SKPaymentTransaction]
 }
 
 extension SKPaymentQueue: InAppPaymentQueue { }
