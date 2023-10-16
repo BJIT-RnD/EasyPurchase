@@ -79,7 +79,7 @@ public class PaymentsController: TransactionController {
         case .failed:
             print("failed")
             let payment = findPayment(for: transaction)
-            payment?.completion(.failure(error: transaction.error as! SKError))
+            payment?.completion(.failure(error: failedTransactionError(for: transaction.error as NSError?)))
             return false
 
         case .restored:
@@ -118,5 +118,13 @@ public class PaymentsController: TransactionController {
             }
         }
         return unhandledTransactions
+    }
+
+    /// Generate an `SKError` for a failed transaction.
+    /// - Parameter error: An optional `NSError` object that represents the underlying error.
+    /// - Returns: An `SKError` instance with the appropriate error code and message.
+    func failedTransactionError(for error: NSError?) -> SKError {
+        let errorMessage = error?.localizedDescription ?? "Unknown error"
+        return SKError(_nsError: NSError(domain: SKErrorDomain, code: SKError.unknown.rawValue, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
     }
 }
