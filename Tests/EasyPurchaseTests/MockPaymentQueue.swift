@@ -14,6 +14,7 @@ class MockPaymentQueue: InAppPaymentQueue {
     // MARK: - PROPERTIES
     var addedObserver: SKPaymentTransactionObserver?
     var addedPayment: [SKPayment] = []
+    var transactionCount = 0
 
     // Mock implementation of adding an observer to the payment queue
     func add(_ observer: SKPaymentTransactionObserver) {
@@ -30,5 +31,9 @@ class MockPaymentQueue: InAppPaymentQueue {
         if self.addedObserver === observer {
             self.addedObserver = nil
         }
+    }
+    
+    func finishTransaction(_ transaction: SKPaymentTransaction) {
+        transactionCount += 1
     }
 }
