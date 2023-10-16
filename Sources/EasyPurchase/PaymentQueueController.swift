@@ -134,7 +134,7 @@ extension PaymentQueueController: SKPaymentTransactionObserver {
         if !rawTransactions.isEmpty {
             // Process the transactions and retrieve any unhandled transactions
             rawTransactions = paymentsController.processTransactions(transactions, on: paymentQueue)
-            rawTransactions = paymentsController.processTransactions(transactions, on: paymentQueue)
+            rawTransactions = restoreProductsController.processTransactions(transactions, on: paymentQueue)
             rawTransactions = completeTransactionsController.processTransactions(rawTransactions, on: paymentQueue)
         }
     }
