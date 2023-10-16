@@ -9,9 +9,9 @@ import Foundation
 import StoreKit
 
 /// Struct to configure and handle restore purchases operation.
-public struct RestorePurchases {
+public struct RestoreProducts {
     let atomically: Bool
-    let applicationUsername: String?
+    let appUserName: String?
     let callback: ([InAppTransactionActionsResult]) -> Void
 
     /// Initialize RestorePurchases with the specified parameters.
@@ -21,27 +21,27 @@ public struct RestorePurchases {
     ///   - callback: A closure to handle the results of the restore operation.
     public init(atomically: Bool, applicationUsername: String? = nil, callback: @escaping ([InAppTransactionActionsResult]) -> Void) {
         self.atomically = atomically
-        self.applicationUsername = applicationUsername
+        self.appUserName = applicationUsername
         self.callback = callback
     }
 }
 
 /// Struct to hold the results of a restore operation.
-public struct RestoreResults {
-    public let restoredPurchases: [Purchase]
-    public let restoreFailedPurchases: [(SKError, String?)]
+public struct RestoreProductsResults {
+    public let restoredProductsSuccess: [Purchase]
+    public let restoredProductsFailure: [(SKError, String?)]
 
     /// Initialize RestoreResults with restored and failed purchase results.
     public init(restoredPurchases: [Purchase], restoreFailedPurchases: [(SKError, String?)]) {
-        self.restoredPurchases = restoredPurchases
-        self.restoreFailedPurchases = restoreFailedPurchases
+        self.restoredProductsSuccess = restoredPurchases
+        self.restoredProductsFailure = restoreFailedPurchases
     }
 }
 
 /// A class to manage restoring purchases and handle the related transactions.
-public class RestorePurchasesController: TransactionController {
-    public var restorePurchases: RestorePurchases?
-    private var restoredPurchases: [InAppTransactionActionsResult] = []
+public class RestoreProductsController: TransactionController {
+    public var restoreProducts: RestoreProducts?
+    private var restoredProducts: [InAppTransactionActionsResult] = []
 
     /// Initialize the RestorePurchasesController.
     public init() { }
@@ -79,14 +79,14 @@ public class RestorePurchasesController: TransactionController {
     ///   - paymentQueue: The payment queue responsible for transactions.
     /// - Returns: An array of unhandled transactions.
     public func processTransactions(_ transactions: [SKPaymentTransaction], on paymentQueue: InAppPaymentQueue) -> [SKPaymentTransaction] {
-        guard let restorePurchases = restorePurchases else {
+        guard let restoreProducts = restoreProducts else {
             return transactions
         }
 
         var unhandledTransactions: [SKPaymentTransaction] = []
         for transaction in transactions {
-            if let restoredPurchase = processTransaction(transaction, atomically: restorePurchases.atomically, on: paymentQueue) {
-                restoredPurchases.append(.restored(purchase: restoredPurchase))
+            if let restoredPurchase = processTransaction(transaction, atomically: restoreProducts.atomically, on: paymentQueue) {
+                restoredProducts.append(.restored(purchase: restoredPurchase))
             } else {
                 unhandledTransactions.append(transaction)
             }
@@ -97,31 +97,31 @@ public class RestorePurchasesController: TransactionController {
 
     /// Handle the case where restore completed transactions failed.
     func restoreCompletedTransactionsFailed(withError error: Error) {
-        guard let restorePurchases = restorePurchases else {
+        guard let restorePurchases = restoreProducts else {
             return
         }
-        restoredPurchases.append(.failed(error: SKError(_nsError: error as NSError)))
-        restorePurchases.callback(restoredPurchases)
+        restoredProducts.append(.failed(error: SKError(_nsError: error as NSError)))
+        restorePurchases.callback(restoredProducts)
 
         // Reset the controller's state after an error
-        restoredPurchases = []
+        restoredProducts = []
         self.resetRestorePurchasesToNil()
     }
 
     /// Handle the case where restore completed transactions finished successfully.
     func restoreCompletedTransactionsFinished() {
-        guard let restorePurchases = restorePurchases else {
+        guard let restorePurchases = restoreProducts else {
             return
         }
-        restorePurchases.callback(restoredPurchases)
+        restorePurchases.callback(restoredProducts)
 
         // Reset the controller's state after successful completion
-        restoredPurchases = []
+        restoredProducts = []
         self.resetRestorePurchasesToNil()
     }
 
     // Reset the controller's state after successful completion
     func resetRestorePurchasesToNil() {
-        self.restorePurchases = nil
+        self.restoreProducts = nil
     }
 }
