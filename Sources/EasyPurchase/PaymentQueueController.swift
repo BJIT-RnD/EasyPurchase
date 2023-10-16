@@ -93,14 +93,23 @@ public class PaymentQueueController: NSObject {
 
     /// Initiates a payment transaction for the specified product.
     /// - Parameter payment: The Payment object containing the product to be purchased and its quantity.
-    public func startPayment(_ payment: Payment) {
+    public func startPayment(_ payment: Payment) throws {
         // Create an SKMutablePayment object using the product and quantity from the Payment object.
-        let skPayment = SKMutablePayment(product: payment.product)
-        skPayment.quantity = payment.quantity
-        // Add the payment to the payment queue.
-        paymentQueue.add(skPayment)
-        // Append the payment to the paymentsController for tracking.
-        paymentsController.append(payment)
+        if payment.quantity > 0 {
+            let skPayment = SKMutablePayment(product: payment.product)
+            skPayment.quantity = payment.quantity
+
+            // Add the payment to the payment queue.
+            paymentQueue.add(skPayment)
+
+            // Append the payment to the paymentsController for tracking.
+            paymentsController.append(payment)
+        } else {
+            // Handle the case when 'quantity' is not a positive value (e.g., log an error or perform an alternative action).
+            print("Error: Payment quantity must be greater than zero")
+            throw NSError(domain: SKErrorDomain, code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid payment quantity: Must be greater than zero"])
+            // You can also throw an error, return from the function, or take any other appropriate action.
+        }
     }
     
     func completeTransactions(_ completeTransactions: ProcessedTransactions) {
