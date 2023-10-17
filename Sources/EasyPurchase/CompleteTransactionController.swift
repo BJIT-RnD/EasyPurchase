@@ -32,6 +32,8 @@ public class CompleteTransactionController: TransactionController {
     var purchases: [Purchase] = []
     var rawTransactions: [SKPaymentTransaction] = []
 
+    public init() {}
+    
     /// Process an array of payment transactions.
     /// - Parameters:
     ///   - transactions: An array of `SKPaymentTransaction` to be processed.
