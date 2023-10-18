@@ -7,7 +7,7 @@
 
 import XCTest
 import StoreKit
-@testable import Consumable_NonConsumable
+@testable import EasyPurchase
 
 /// Unit tests for the `PaymentsController` class.
 class PaymentsControllerTests: XCTestCase {
