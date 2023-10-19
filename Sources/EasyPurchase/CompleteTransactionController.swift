@@ -10,11 +10,19 @@ import StoreKit
 
 // MARK: - ProcessedTransactions
 
-/// A struct that encapsulates a completion closure for processed transactions.
+/// A struct representing a set of processed transactions with a specified completion handler.
 struct ProcessedTransactions {
-    var completion: ([Purchase]) -> Void
+    /// A boolean flag indicating whether the transactions should be processed atomically.
+    let atomically: Bool
+    /// A completion handler that takes an array of `Purchase` objects and handles the processing of these transactions.
+    let completion: ([Purchase]) -> Void
     
-    init(completion: @escaping ([Purchase]) -> Void) {
+    /// Initializes an instance of `ProcessedTransactions` with the provided settings.
+    /// - Parameters:
+    ///   - atomically: A boolean flag to indicate if the transactions should be processed atomically (default is `true`).
+    ///   - completion: A closure that takes an array of `Purchase` objects and defines the processing logic for these transactions.
+    init(atomically: Bool = true, completion: @escaping ([Purchase]) -> Void) {
+        self.atomically = atomically
         self.completion = completion
     }
 }
@@ -48,7 +56,7 @@ public class CompleteTransactionController: TransactionController {
         for transaction in transactions {
             let transactionState = transaction.transactionState
             if transactionState != .purchasing {
-                let willFinishTransaction = transactionState == .failed
+                let willFinishTransaction = processedTransactions.atomically || transactionState == .failed
                 // Create a Purchase object with transaction details.
                 let purchase = Purchase(productId: transaction.payment.productIdentifier, quantity: transaction.payment.quantity, product: nil, transaction: transaction, originalTransaction: transaction.original, needsFinishTransaction: !willFinishTransaction)
                 // Append the purchase to the purchases array.
