@@ -47,9 +47,7 @@ final class PaymentQueueControllerTests: XCTestCase {
         let transactions = [mockTransaction]
 
         let payment = mockPayment(productIdentifier: "com.bjitgroup.easypurchase.consumable.tencoin") { _ in }
-        do {
-            try mockPaymentQueueController.startPayment(payment)
-        }
+        do { try mockPaymentQueueController.startPayment(payment) }
         catch let error as NSError {
             // Handle the error and access error information
             print("Payment failed with error: \(error.localizedDescription)")
@@ -62,7 +60,7 @@ final class PaymentQueueControllerTests: XCTestCase {
         }
         XCTAssertEqual(mockPaymentQueue.addedPayment.count, 1)
     }
-    
+
     func testPaymentQuantityGreaterThanZeroSuccess() {
         let mockTransaction = SKPaymentTransaction()
         let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
@@ -107,8 +105,8 @@ final class PaymentQueueControllerTests: XCTestCase {
         XCTAssertEqual(mockPaymentQueue.addedPayment.count, 0)
     }
 
-
-    func testPaymentQueueCallbacks_whenHandlingTransactions() {
+    /// Test the payment queue with one transaction for each state and callbacks.
+    func testPaymentQueueWithOneTransactionForEachStateAndCallbacks() {
         let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
 
         let purchasedProductIdentifier = "com.bjitgroup.easypurchase.consumable.tencoin"
@@ -131,13 +129,28 @@ final class PaymentQueueControllerTests: XCTestCase {
             if case .success(let purchase) = result {
                 XCTAssertEqual(purchase.product.productIdentifier, purchasedProductIdentifier)
             } else {
-                XCTFail("Callback With PID:")
+                XCTFail("Callback With purchase id.")
             }
             XCTAssertTrue(isPaymentCallbackCalled)
         }
-        do {
-            try mockPaymentQueueController.startPayment(mockPayment)
+
+        var isRestored = false
+        let restorePurchases = RestoreProducts(atomically: true) { restores in
+            isRestored = true
+            XCTAssertEqual(restores.count, 1)
+            if case .restored(let purchase) = restores.first {
+                XCTAssertEqual(purchase.productId, restoredProductIdentifier)
+            } else {
+                XCTFail("Restored not completed.")
+            }
         }
+
+        var isCompleteTransactionCalled = false
+        let completeTransaction = ProcessedTransactions { purchases in
+            isCompleteTransactionCalled = true
+        }
+
+        do { try mockPaymentQueueController.startPayment(mockPayment) }
         catch let error as NSError {
             // Handle the error and access error information
             print("Payment failed with error: \(error.localizedDescription)")
@@ -148,8 +161,114 @@ final class PaymentQueueControllerTests: XCTestCase {
         catch {
             // handle other errors here
         }
+        mockPaymentQueueController.completeTransactions(completeTransaction)
+        mockPaymentQueueController.restorePurchases(restorePurchases)
+        mockPaymentQueueController.paymentQueue(SKPaymentQueue(), updatedTransactions: transaction)
+        mockPaymentQueueController.paymentQueueRestoreCompletedTransactionsFinished(SKPaymentQueue())
 
-        paymentQueueController.paymentQueue(SKPaymentQueue(), updatedTransactions: transaction)
+        XCTAssertTrue(isCompleteTransactionCalled)
+        XCTAssertTrue(isPaymentCallbackCalled)
+        XCTAssertTrue(isRestored)
+    }
+
+    /// Test the payment queue with one transaction for each state callbacks without restore.
+    func testPaymentQueueWithOneTransactionForEachStateCallbacksWithoutRestore() {
+        let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
+
+        let purchasedProductIdentifier = "com.SwiftyStoreKit.product1"
+        let failedProductIdentifier = "com.SwiftyStoreKit.product2"
+        let restoredProductIdentifier = "com.SwiftyStoreKit.product3"
+        let deferredProductIdentifier = "com.SwiftyStoreKit.product4"
+        let purchasingProductIdentifier = "com.SwiftyStoreKit.product5"
+
+        let transactions = [
+            makeMockTransactionPayment(productId: purchasedProductIdentifier, transactionState: .purchased),
+            makeMockTransactionPayment(productId: failedProductIdentifier, transactionState: .failed),
+            makeMockTransactionPayment(productId: restoredProductIdentifier, transactionState: .restored),
+            makeMockTransactionPayment(productId: deferredProductIdentifier, transactionState: .deferred),
+            makeMockTransactionPayment(productId: purchasingProductIdentifier, transactionState: .purchasing)
+            ]
+
+        var paymentCallbackCalled = false
+        let mockPayment =  mockPayment(productIdentifier: purchasedProductIdentifier) { result in
+            paymentCallbackCalled = true
+            if case .success(purchase: let payment) = result {
+                XCTAssertEqual(payment.product.productIdentifier, purchasedProductIdentifier)
+            } else {
+                XCTFail("Purchased callback with product id")
+            }
+        }
+
+        var completeTransactionsCallbackCalled = false
+        let completeTransactions = ProcessedTransactions { payments in
+            completeTransactionsCallbackCalled = true
+        }
+
+        do { try mockPaymentQueueController.startPayment(mockPayment) }
+        catch let error as NSError {
+            // Handle the error and access error information
+            print("Payment failed with error: \(error.localizedDescription)")
+            print("Error code: \(error.code)")
+            print("Error domain: \(error.domain)")
+            XCTAssertEqual(error.localizedDescription, "Invalid payment quantity: Must be greater than zero")
+        }
+        catch {
+            // handle other errors here
+        }
+        mockPaymentQueueController.completeTransactions(completeTransactions)
+        mockPaymentQueueController.paymentQueue(SKPaymentQueue(), updatedTransactions: transactions)
+        mockPaymentQueueController.paymentQueueRestoreCompletedTransactionsFinished(SKPaymentQueue())
+
+        XCTAssertTrue(paymentCallbackCalled)
+        XCTAssertTrue(completeTransactionsCallbackCalled)
+    }
+
+    /// Test the payment queue with one transaction for each state callbacks without startPayment.
+    func testPaymentQueueWithOneTransactionForEachStateCallbacksWithoutStartPayment() {
+        let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
+
+        let purchasedProductIdentifier = "com.SwiftyStoreKit.product1"
+        let failedProductIdentifier = "com.SwiftyStoreKit.product2"
+        let restoredProductIdentifier = "com.SwiftyStoreKit.product3"
+        let deferredProductIdentifier = "com.SwiftyStoreKit.product4"
+        let purchasingProductIdentifier = "com.SwiftyStoreKit.product5"
+
+        let transactions = [
+            makeMockTransactionPayment(productId: purchasedProductIdentifier, transactionState: .purchased),
+            makeMockTransactionPayment(productId: failedProductIdentifier, transactionState: .failed),
+            makeMockTransactionPayment(productId: restoredProductIdentifier, transactionState: .restored),
+            makeMockTransactionPayment(productId: deferredProductIdentifier, transactionState: .deferred),
+            makeMockTransactionPayment(productId: purchasingProductIdentifier, transactionState: .purchasing)
+            ]
+
+        var restorePurchasesCallbackCalled = false
+        let restorePurchases = RestoreProducts(atomically: true) { results in
+            restorePurchasesCallbackCalled = true
+            XCTAssertEqual(results.count, 1)
+            let first = results.first!
+            if case .restored(let restoredPayment) = first {
+                XCTAssertEqual(restoredPayment.productId, restoredProductIdentifier)
+            } else {
+                XCTFail("Restored callback with product")
+            }
+        }
+
+        var completeTransactionsCallbackCalled = false
+        let completeTransactions = ProcessedTransactions { payments in
+            completeTransactionsCallbackCalled = true
+            XCTAssertEqual(payments.count, 3)
+            XCTAssertEqual(payments[0].productId, purchasedProductIdentifier)
+            XCTAssertEqual(payments[1].productId, failedProductIdentifier)
+            XCTAssertEqual(payments[2].productId, deferredProductIdentifier)
+        }
+
+        mockPaymentQueueController.completeTransactions(completeTransactions)
+        mockPaymentQueueController.restorePurchases(restorePurchases)
+        mockPaymentQueueController.paymentQueue(SKPaymentQueue(), updatedTransactions: transactions)
+        mockPaymentQueueController.paymentQueueRestoreCompletedTransactionsFinished(SKPaymentQueue())
+
+        XCTAssertTrue(restorePurchasesCallbackCalled)
+        XCTAssertTrue(completeTransactionsCallbackCalled)
     }
 
     /// Test case to check when `shouldAddStorePaymentCompletion` is nil and `shouldAddStorePayment` returns false
@@ -192,12 +311,24 @@ final class PaymentQueueControllerTests: XCTestCase {
         XCTAssertFalse(mockPaymentQueueController.paymentQueue(SKPaymentQueue(), shouldAddStorePayment: SKPayment(), for: MockProduct(productIdentifier: "")))
     }
 
-    func mockPayment(productIdentifier: String, quantity:Int = 1, needToDownloadContent: Bool = true, completion: @escaping (PurchaseResult) -> Void) -> Payment {
+    /// Create a mock payment for testing.
+    /// - Parameters:
+    ///   - productIdentifier: The product identifier for the mock product.
+    ///   - quantity: The quantity for the mock payment.
+    ///   - needToDownloadContent: A boolean indicating if content needs to be downloaded.
+    ///   - completion: A callback to handle the payment result.
+    /// - Returns: A `Payment` object for testing.
+    func mockPayment(productIdentifier: String, quantity: Int = 1, needToDownloadContent: Bool = true, completion: @escaping (PurchaseResult) -> Void) -> Payment {
         let mockProduct = MockProduct(productIdentifier: productIdentifier)
 
         return Payment(product: mockProduct, quantity: quantity, needToDownloadContent: needToDownloadContent, completion: completion)
     }
 
+    /// Create a mock payment transaction for testing.
+    /// - Parameters:
+    ///   - productId: The product identifier for the mock product.
+    ///   - transactionState: The transaction state for the mock payment transaction.
+    /// - Returns: A `MockPaymentTransaction` object for testing.
     func makeMockTransactionPayment(productId: String, transactionState: SKPaymentTransactionState) -> MockPaymentTransaction {
         let mockProduct = MockProduct(productIdentifier: productId)
         return MockPaymentTransaction(payment: SKPayment(product: mockProduct),transactionState: transactionState)
