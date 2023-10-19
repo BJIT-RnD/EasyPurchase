@@ -51,8 +51,20 @@ public class PaymentsController: TransactionController {
     ///
     /// - Parameter transaction: The `SKPaymentTransaction` to find a payment for.
     /// - Returns: The corresponding `Payment` object, if found.
-    private func findPayment(for transaction: SKPaymentTransaction) -> Payment? {
+    private func findPurchase(for transaction: SKPaymentTransaction) -> Payment? {
         return payments.first { $0.product.productIdentifier == transaction.payment.productIdentifier }
+    }
+
+    /// Finds the position of a payment in the list of payments based on its product identifier.
+    /// - Parameter identifier: The unique product identifier of the payment to locate.
+    /// - Returns: The index of the payment in the `payments` array, or `nil` if not found.
+    private func paymentIndexPosition(withIdentifier identifier: String) -> Int? {
+        for (index, payment) in payments.enumerated() {
+            if payment.product.productIdentifier == identifier {
+                return index
+            }
+        }
+        return nil
     }
 
     /// Process a single transaction.
@@ -62,30 +74,41 @@ public class PaymentsController: TransactionController {
     ///   - paymentQueue: The payment queue responsible for the transaction.
     /// - Returns: `true` if the transaction was successfully handled; otherwise, `false`.
     func processTransaction(_ transaction: SKPaymentTransaction, on paymentQueue: InAppPaymentQueue) -> Bool {
+        let transactionId = transaction.payment.productIdentifier
+        guard let paymentIndex = paymentIndexPosition(withIdentifier: transactionId) else {
+            return false
+        }
+        let payment = payments[paymentIndex]
+
         switch transaction.transactionState {
         case .purchasing:
             // Transaction is being processed, no action needed for now
             return true
 
         case .purchased:
-            if let payment = findPayment(for: transaction) {
-                payment.completion(.success(purchase: payment))
+            if let purchase = findPurchase(for: transaction) {
+                payment.completion(.success(purchase: purchase))
+                paymentQueue.finishTransaction(transaction)
+                payments.remove(at: paymentIndex)
                 return true
             }
             // Handle the case when 'findPayment' returns nil
             return false
 
         case .failed:
-            print("failed")
-            let payment = findPayment(for: transaction)
-            payment?.completion(.failure(error: failedTransactionError(for: transaction.error as NSError?)))
-            return false
+            let purchase = findPurchase(for: transaction)
+            payment.completion(.failure(error: failedTransactionError(for: transaction.error as NSError?)))
+            paymentQueue.finishTransaction(transaction)
+            payments.remove(at: paymentIndex)
+            return true
 
         case .restored:
             // Transaction was restored (e.g., for a previously purchased non-consumable)
             // You may want to unlock content or provide the restored item
-            if let payment = findPayment(for: transaction) {
-                payment.completion(.success(purchase: payment))
+            if let purchase = findPurchase(for: transaction) {
+                payment.completion(.success(purchase: purchase))
+                paymentQueue.finishTransaction(transaction)
+                payments.remove(at: paymentIndex)
                 return true
             } else {
                 // Handle the case when 'findPayment' returns nil
