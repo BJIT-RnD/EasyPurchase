@@ -13,12 +13,12 @@ public typealias ShouldAddStorePaymentCompletion = (_ payment: SKPayment, _ prod
 
 // MARK: - 'Purchase' STRUCT
 public struct Purchase {
-    let productId: String
-    let quantity: Int
-    let product: SKProduct? //??
-    let transaction: PaymentTransaction
-    let originalTransaction: PaymentTransaction?
-    let needsFinishTransaction: Bool
+    public let productId: String
+    public let quantity: Int
+    public let product: SKProduct? //??
+    public let transaction: PaymentTransaction
+    public let originalTransaction: PaymentTransaction?
+    public let needsFinishTransaction: Bool
     
     public init(productId: String, quantity: Int, product: SKProduct?, transaction: PaymentTransaction, originalTransaction: PaymentTransaction?, needsFinishTransaction: Bool) {
         self.productId = productId

@@ -97,11 +97,11 @@ public class RestoreProductsController: TransactionController {
 
     /// Handle the case where restore completed transactions failed.
     func restoreCompletedTransactionsFailed(withError error: Error) {
-        guard let restorePurchases = restoreProducts else {
+        guard let restoreProducts = restoreProducts else {
             return
         }
         restoredProducts.append(.failed(error: SKError(_nsError: error as NSError)))
-        restorePurchases.callback(restoredProducts)
+        restoreProducts.callback(restoredProducts)
 
         // Reset the controller's state after an error
         restoredProducts = []
@@ -110,10 +110,10 @@ public class RestoreProductsController: TransactionController {
 
     /// Handle the case where restore completed transactions finished successfully.
     func restoreCompletedTransactionsFinished() {
-        guard let restorePurchases = restoreProducts else {
+        guard let restoreProducts = restoreProducts else {
             return
         }
-        restorePurchases.callback(restoredProducts)
+        restoreProducts.callback(restoredProducts)
 
         // Reset the controller's state after successful completion
         restoredProducts = []
