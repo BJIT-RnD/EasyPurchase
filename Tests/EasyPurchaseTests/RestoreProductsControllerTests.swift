@@ -51,7 +51,7 @@ class RestoreProductsControllerTests: XCTestCase {
         // Verify that there are no remaining transactions, the callback was called, and finishTransaction was called
         XCTAssertEqual(remainingTransactions.count, 0)
         XCTAssertTrue(callbackCalled)
-        XCTAssertEqual(mockQueue.restoreCompletedTransactionCalledCount, 1)
+        XCTAssertEqual(mockQueue.transactionCount, 1)
     }
 
     // Test if the processTransactions method correctly handles two restored transactions
@@ -79,7 +79,7 @@ class RestoreProductsControllerTests: XCTestCase {
 
         XCTAssertEqual(remainingTransactions.count, 0)
         XCTAssertTrue(callbackCalled)
-        XCTAssertEqual(mockQueue.restoreCompletedTransactionCalledCount, 2)
+        XCTAssertEqual(mockQueue.transactionCount, 2)
     }
 
     // Test if the restoreCompletedTransactionsFailed method correctly calls the callback with an error
