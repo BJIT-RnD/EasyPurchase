@@ -122,6 +122,15 @@ public class PaymentQueueController: NSObject {
         /// Set the `processedTransactions` property to the provided `completeTransactions`.
         completeTransactionsController.processedTransactions = completeTransactions
     }
+
+    /// This method is used to complete and finalize an in-app purchase transaction, removing it from the payment queue.
+    /// - Parameter transaction: The payment transaction to finish.
+    func finishTransaction(_ transaction: PaymentTransaction) {
+        guard let inAppTransaction = transaction as? SKPaymentTransaction else {
+            return
+        }
+        paymentQueue.finishTransaction(inAppTransaction)
+    }
 }
 
 extension PaymentQueueController: SKPaymentTransactionObserver {
