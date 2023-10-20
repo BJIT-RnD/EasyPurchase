@@ -126,9 +126,9 @@ class PaymentsControllerTests: XCTestCase {
         let mockPaymentsController = mockPaymentsController([paymentOne, paymentTwo])
         let transactionOne = MockPaymentTransaction(payment: SKPayment(product: productOne), transactionState: .purchased)
         let transactionTwo = MockPaymentTransaction(payment: SKPayment(product: productTwo), transactionState: .failed)
-        let remainingTransactions = mockPaymentsController.processTransactions([transactionOne, transactionTwo], on: mockPaymentQueue)
+        let leftoverTransactions = mockPaymentsController.processTransactions([transactionOne, transactionTwo], on: mockPaymentQueue)
 
-        XCTAssertEqual(remainingTransactions.count, 0)
+        XCTAssertEqual(leftoverTransactions.count, 0)
         XCTAssertEqual(mockPaymentQueue.transactionCount, 2)
         XCTAssertTrue(isCompletionCalled)
         XCTAssertTrue(isCompletionCalledTwo)
@@ -153,8 +153,8 @@ class PaymentsControllerTests: XCTestCase {
         let skPayment = SKMutablePayment(product: mockProduct)
         skPayment.quantity = quantity
         let transaction = MockPaymentTransaction(payment: skPayment, transactionState: .purchased)
-        let remainingTransaction = mockPaymentsController.processTransactions([transaction], on: mockPaymentQueue)
-        XCTAssertEqual(remainingTransaction.count, 0)
+        let leftoverTransactions = mockPaymentsController.processTransactions([transaction], on: mockPaymentQueue)
+        XCTAssertEqual(leftoverTransactions.count, 0)
         XCTAssertTrue(isCalledBack)
         XCTAssertEqual(mockPaymentQueue.transactionCount, 1)
     }
@@ -174,9 +174,9 @@ class PaymentsControllerTests: XCTestCase {
         }
         let mockPaymentsController = mockPaymentsController([payment])
         let transaction = MockPaymentTransaction(payment: SKPayment(product: mockProduct), transactionState: .purchased)
-        let remainingTransaction = mockPaymentsController.processTransactions([transaction], on: mockPaymentQueue)
+        let leftoverTransactions = mockPaymentsController.processTransactions([transaction], on: mockPaymentQueue)
 
-        XCTAssertEqual(remainingTransaction.count, 0)
+        XCTAssertEqual(leftoverTransactions.count, 0)
         XCTAssertEqual(mockPaymentQueue.transactionCount, 1)
         XCTAssertTrue(isCallBacked)
     }
@@ -196,9 +196,9 @@ class PaymentsControllerTests: XCTestCase {
         }
         let mockPaymentsController = mockPaymentsController([payment])
         let mockTransaction = MockPaymentTransaction(payment: SKPayment(product: mockProduct), transactionState: .failed)
-        let remainingTransaction = mockPaymentsController.processTransactions([mockTransaction], on: mockPaymentQueue)
+        let leftoverTransactions = mockPaymentsController.processTransactions([mockTransaction], on: mockPaymentQueue)
 
-        XCTAssertEqual(remainingTransaction.count, 0)
+        XCTAssertEqual(leftoverTransactions.count, 0)
         XCTAssertTrue(isCallbackCalled)
         XCTAssertEqual(mockPaymentQueue.transactionCount, 1)
     }
