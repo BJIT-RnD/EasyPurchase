@@ -66,7 +66,7 @@ public class RestoreProductsController: TransactionController {
                 needsFinishTransaction: !atomically
             )
             if atomically {
-                paymentQueue.finishTransaction(transaction)
+                paymentQueue.restoreCompletedTransactions(withApplicationUsername: "")
             }
             return purchase
         }
