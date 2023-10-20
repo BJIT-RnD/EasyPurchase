@@ -175,11 +175,11 @@ final class PaymentQueueControllerTests: XCTestCase {
     func testPaymentQueueWithOneTransactionForEachStateCallbacksWithoutRestore() {
         let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
 
-        let purchasedProductIdentifier = "com.SwiftyStoreKit.product1"
-        let failedProductIdentifier = "com.SwiftyStoreKit.product2"
-        let restoredProductIdentifier = "com.SwiftyStoreKit.product3"
-        let deferredProductIdentifier = "com.SwiftyStoreKit.product4"
-        let purchasingProductIdentifier = "com.SwiftyStoreKit.product5"
+        let purchasedProductIdentifier = "com.bjitgroup.easypurchase.consumable.tencoin"
+        let failedProductIdentifier = "com.bjitgroup.easypurchase.consumable.twentycoin"
+        let restoredProductIdentifier = "com.bjitgroup.easypurchase.consumable.thirtycoin"
+        let deferredProductIdentifier = "com.bjitgroup.easypurchase.consumable.tencoin"
+        let purchasingProductIdentifier = "com.bjitgroup.easypurchase.consumable.thirtycoin"
 
         let transactions = [
             makeMockTransactionPayment(productId: purchasedProductIdentifier, transactionState: .purchased),
@@ -227,11 +227,11 @@ final class PaymentQueueControllerTests: XCTestCase {
     func testPaymentQueueWithOneTransactionForEachStateCallbacksWithoutStartPayment() {
         let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
 
-        let purchasedProductIdentifier = "com.SwiftyStoreKit.product1"
-        let failedProductIdentifier = "com.SwiftyStoreKit.product2"
-        let restoredProductIdentifier = "com.SwiftyStoreKit.product3"
-        let deferredProductIdentifier = "com.SwiftyStoreKit.product4"
-        let purchasingProductIdentifier = "com.SwiftyStoreKit.product5"
+        let purchasedProductIdentifier = "com.bjitgroup.easypurchase.consumable.tencoin"
+        let failedProductIdentifier = "com.bjitgroup.easypurchase.consumable.twentycoin"
+        let restoredProductIdentifier = "com.bjitgroup.easypurchase.consumable.thirtycoin"
+        let deferredProductIdentifier = "com.bjitgroup.easypurchase.consumable.tencoin"
+        let purchasingProductIdentifier = "com.bjitgroup.easypurchase.consumable.thirtycoin"
 
         let transactions = [
             makeMockTransactionPayment(productId: purchasedProductIdentifier, transactionState: .purchased),
@@ -280,7 +280,7 @@ final class PaymentQueueControllerTests: XCTestCase {
         mockPaymentQueueController.shouldAddStorePaymentCompletion = nil
 
         /// Assert that `paymentQueue` returns false when `shouldAddStorePayment` is called
-        XCTAssertFalse(mockPaymentQueueController.paymentQueue(SKPaymentQueue(), shouldAddStorePayment: SKPayment(), for: MockProduct(productIdentifier: "")))
+        XCTAssertFalse(mockPaymentQueueController.paymentQueue(SKPaymentQueue(), shouldAddStorePayment: SKPayment(), for: MockProduct(productIdentifier: "com.bjitgroup.easypurchase.consumable.tencoin")))
     }
 
     /// Test case to check when `shouldAddStorePaymentCompletion` returns true and `shouldAddStorePayment` returns true
@@ -294,7 +294,7 @@ final class PaymentQueueControllerTests: XCTestCase {
         }
 
         /// Assert that `paymentQueue` returns true when `shouldAddStorePayment` is called
-        XCTAssertTrue(mockPaymentQueueController.paymentQueue(SKPaymentQueue(), shouldAddStorePayment: SKPayment(), for: MockProduct(productIdentifier: "")))
+        XCTAssertTrue(mockPaymentQueueController.paymentQueue(SKPaymentQueue(), shouldAddStorePayment: SKPayment(), for: MockProduct(productIdentifier: "com.bjitgroup.easypurchase.consumable.tencoin")))
     }
 
     /// Test case to check when `shouldAddStorePaymentCompletion` returns false and `shouldAddStorePayment` returns false
@@ -308,7 +308,7 @@ final class PaymentQueueControllerTests: XCTestCase {
         }
 
         /// Assert that `paymentQueue` returns false when `shouldAddStorePayment` is called
-        XCTAssertFalse(mockPaymentQueueController.paymentQueue(SKPaymentQueue(), shouldAddStorePayment: SKPayment(), for: MockProduct(productIdentifier: "")))
+        XCTAssertFalse(mockPaymentQueueController.paymentQueue(SKPaymentQueue(), shouldAddStorePayment: SKPayment(), for: MockProduct(productIdentifier: "com.bjitgroup.easypurchase.consumable.tencoin")))
     }
 
     /// Create a mock payment for testing.
