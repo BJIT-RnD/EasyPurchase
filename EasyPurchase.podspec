@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.source = { :git => "https://github.com/BJIT-RnD/EasyPurchase.git", :tag => "v1.0.0" }
   s.source_files = "Sources/EasyPurchase/**/*.swift"
   s.swift_version = "5.0" # Swift 5 and above
-  s.dependency   "SwiftyStoreKit"
+  s.dependency   "StoreKit"
   s.requires_arc = true
   s.documentation_url = "https://github.com/BJIT-RnD/EasyPurchase#readme"
   s.ios.deployment_target = "11.0"
