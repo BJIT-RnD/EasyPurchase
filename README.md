@@ -1,3 +1,3 @@
 # EasyPurchase
 
-A description of this package. EasyPurchase Version 1.0.0
+A description of this package. Version v1.0.0
