@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.license      = { :type => "MIT", :file => "LICENSE" }
   s.author       = { "BJIT" => "bjit@bjitgroup.com" }
   s.platform     = :ios, "11.0"
-  s.source       = { :git => "https://github.com/BJIT-RnD/EasyPurchase.git", :tag => "#{s.version}" }
+  s.source = { :git => "https://github.com/BJIT-RnD/EasyPurchase.git", :tag => "1.0.0" }
   s.source_files = "Sources/EasyPurchase/**/*.swift"
   s.swift_version = "5.0" # Swift 5 and above
   s.dependency   "SwiftyStoreKit"
