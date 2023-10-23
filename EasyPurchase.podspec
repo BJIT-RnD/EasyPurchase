@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
   s.summary      = "An easy-to-use In-App Purchase library for iOS."
   s.description  = "EasyPurchase simplifies In-App Purchase integration into your iOS app by providing basic features like purchasing, restoring, and receipt validation."
   s.homepage     = "https://github.com/BJIT-RnD/EasyPurchase"
-  s.license      = { :type => "MIT", :file => "LICENSE" }
+  s.license = { :type => "MIT", :file => "LICENSE.md" }
   s.author       = { "BJIT" => "bjit@bjitgroup.com" }
   s.platform     = :ios, "11.0"
   s.source = { :git => "https://github.com/BJIT-RnD/EasyPurchase.git", :tag => "v1.0.0" }
