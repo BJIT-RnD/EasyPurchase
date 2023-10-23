@@ -1,3 +1,3 @@
 # EasyPurchase
 
-A description of this package. Develop Branch Version 0.0.1
+A description of this package. Develop Branch Version 1.0.0
