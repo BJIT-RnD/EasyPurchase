@@ -1,10 +1,9 @@
 //
-//  FetchPro.swift
-//  EasyPurchaseDemoTests
+//  FetchProductTests.swift
 //
-//  Created by rex on 4/10/23.
 //
-
+//  Created by BJIT on 29/9/23.
+//
 import XCTest
 import StoreKit
 @testable import EasyPurchase
@@ -234,4 +233,3 @@ class FetchProductTests: XCTestCase {
         XCTAssertNil(fetchProduct.cachedProducts?.invalidProductIDs)
     }
 }
-

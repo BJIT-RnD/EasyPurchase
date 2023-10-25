@@ -29,10 +29,10 @@ class IAPManager: NSObject {
     static let shared = IAPManager()
     private override init() { super.init() }
     
-//    var productRequest:InAppProductRequest!
-//    let productInfoController = ProductInfoController()
-//    let paymentQueueController = PaymentQueueController()
-//    let restoreProductsController = RestoreProductsController()
+    var productRequest:InAppProductRequest!
+    let productInfoController = ProductInfoController()
+    let paymentQueueController = PaymentQueueController()
+    let restoreProductsController = RestoreProductsController()
 
     private func getProductIDsByType(purchaseType: PurchaseType) -> String {
         switch purchaseType {
@@ -60,69 +60,58 @@ class IAPManager: NSObject {
         }
     }
     
-//    func getProducts(purchaseType: PurchaseType, completion: @escaping ([SKProduct]?, Error?) -> Void) {
-//        let products = getProductIDsFromBundle(purchaseType: purchaseType)
-//        self.productRequest = productInfoController.fetchProductsInfo(Set(products!)) { productInfo in
-//            if productInfo.error != nil {
-//                completion(nil, productInfo.error)
-//            } else {
-//                if let retrievedProducts = productInfo.retrievedProducts {
-//                    completion(Array(retrievedProducts), nil)
-//                } else {
-//                    
-//                }
-//            }
-//        }
-//        self.productRequest.start()
-//    }
+    func getProducts(purchaseType: PurchaseType, completion: @escaping ([SKProduct]?, Error?) -> Void) {
+        let products = getProductIDsFromBundle(purchaseType: purchaseType)
+        self.productRequest = productInfoController.fetchProductsInfo(Set(products!)) { productInfo in
+            if productInfo.error != nil {
+                completion(nil, productInfo.error)
+            } else {
+                if let retrievedProducts = productInfo.retrievedProducts {
+                    completion(Array(retrievedProducts), nil)
+                } else {
+                    
+                }
+            }
+        }
+        self.productRequest.start()
+    }
     
-//    func purchaseProduct(purchaseType: PurchaseType, product: SKProduct, completion: @escaping (PurchaseResult) -> Void) {
-//        var quantity: Int = 1
-//        if purchaseType == .consumable {
-//            quantity = 2
-//        }
-//        
-//        let payment = Payment(product: product, quantity: quantity, needToDownloadContent: true) { result in
-//            completion(result)
-//        }
-//        paymentQueueController.startPayment(payment)
-//    }
+    func purchaseProduct(purchaseType: PurchaseType, product: SKProduct, completion: @escaping (PurchaseResult) -> Void) {
+        var quantity: Int = 1
+        if purchaseType == .consumable {
+            quantity = 2
+        }
+        
+        let payment = Payment(product: product, quantity: quantity, needToDownloadContent: true) { result in
+            completion(result)
+        }
+        
+        do {
+            try paymentQueueController.startPayment(payment)
+        } catch {
+            print("Error: \(error)")
+        }
+    }
     
-//    func restorePurchase() {
-//        // Check if the restoration process is already in progress
-//        if restoreProductsController.restoreProducts != nil {
-//            // Handle this case if needed (e.g., show an alert to inform the user)
-//            return
-//        }
-//
-//        // Configure the restoration process using the RestoreProducts struct
-//        let restoreProducts = RestoreProducts(atomically: true, applicationUsername: nil) { [weak self] restoredProducts in
-//            // Handle the results of the restoration process here
-//            if restoredProducts.isEmpty {
-//                // Handle the case where no purchases were restored
-//                print("No purchases were restored.")
-//            } else {
-//                // Handle the restored purchases
-//                for result in restoredProducts {
-//                    switch result {
-//                    case .restored(let purchase):
-//                        // Handle the restored purchase (e.g., unlock content)
-//                        print("Restored purchase: \(purchase.productId)")
-//                    case .failed(let error):
-//                        // Handle the failed restoration (e.g., show an alert with error details)
-//                        print("Failed to restore purchase with error: \(error)")
-//                    default:
-//                        break
-//                    }
-//                }
-//            }
-//
-//            // Reset the controller's state after handling the results
-//            self?.restoreProductsController.restoreCompletedTransactionsFinished()
-//        }
-//
-//        // Start the restoration process
-//        restoreProductsController.restorePurchases(restoreProducts)
-//    }
-    
+    func restorePurchases(completion: @escaping ([Purchase], [SKError]) -> Void) {
+        let restoreConfig = RestoreProducts(atomically: true) { results in
+            var restoredPurchases: [Purchase] = []
+            var restoreErrors: [SKError] = []
+
+            for result in results {
+                switch result {
+                case .restored(let purchase):
+                    print("YES")
+                    restoredPurchases.append(purchase)
+                case .failed(let error):
+                    print("NO")
+                    restoreErrors.append(error)
+                default:
+                    break
+                }
+            }
+            completion(restoredPurchases, restoreErrors)
+        }
+        paymentQueueController.restorePurchases(restoreConfig)
+    }
 }
