@@ -8,7 +8,7 @@
 import UIKit
 import StoreKit
 
-class PurchaseViewController: UIViewController, SKProductsRequestDelegate {
+class PurchaseViewController: UIViewController {
     var selectedPurchaseType: PurchaseType?
     @IBOutlet weak var purchaseTableView: UITableView!
     var productArray = [SKProduct]()
@@ -54,66 +54,35 @@ class PurchaseViewController: UIViewController, SKProductsRequestDelegate {
     private func fetchProductFromAppStore() {
         activityIndicator.startAnimating()
         if let selectedPurchaseType = self.selectedPurchaseType {
-//            IAPManager.shared.getProducts(purchaseType: selectedPurchaseType) { [weak self] productList, error in
-//                guard let self = self else { return }
-//
-//                if let error = error {
-//                    let errorMessage = "Failed to fetch products: \(error.localizedDescription)"
-//                    DispatchQueue.main.async {
-//                        self.presentAlert(title: "Failed!", message: errorMessage)
-//                        self.activityIndicator.stopAnimating()
-//                    }
-//                } else {
-//                    if let productList = productList, !productList.isEmpty {
-//                        self.productArray = productList
-//                        //self.checkOtherSKProductAttributes(productList: self.productArray)
-//                        DispatchQueue.main.async {
-//                            self.purchaseTableView.reloadData()
-//                            self.activityIndicator.stopAnimating()
-//                        }
-//                    } else {
-//                        let errorMessage = "No products fetched or an error occurred."
-//                        DispatchQueue.main.async {
-//                            self.presentAlert(title: "Failed!", message: errorMessage)
-//                            self.activityIndicator.stopAnimating()
-//                        }
-//                    }
-//                }
-//            }
-            
-            if let productIdentifiers = IAPManager.shared.getProductIDsFromBundle(purchaseType: selectedPurchaseType), !productIdentifiers.isEmpty {
-                let request = SKProductsRequest(productIdentifiers: Set(productIdentifiers))
-                request.delegate = self
-                request.start()
+            IAPManager.shared.getProducts(purchaseType: selectedPurchaseType) { [weak self] productList, error in
+                guard let self = self else { return }
+
+                if let error = error {
+                    let errorMessage = "Failed to fetch products: \(error.localizedDescription)"
+                    DispatchQueue.main.async {
+                        self.presentAlert(title: "Failed!", message: errorMessage)
+                        self.activityIndicator.stopAnimating()
+                    }
+                } else {
+                    if let productList = productList, !productList.isEmpty {
+                        self.productArray = productList
+                        //self.checkOtherSKProductAttributes(productList: self.productArray)
+                        DispatchQueue.main.async {
+                            self.purchaseTableView.reloadData()
+                            self.activityIndicator.stopAnimating()
+                        }
+                    } else {
+                        let errorMessage = "No products fetched or an error occurred."
+                        DispatchQueue.main.async {
+                            self.presentAlert(title: "Failed!", message: errorMessage)
+                            self.activityIndicator.stopAnimating()
+                        }
+                    }
+                }
             }
-            
-            
         } else {
             let errorMessage = "Failed to fetch product"
             self.presentAlert(title: "Failed!", message: errorMessage)
-            self.activityIndicator.stopAnimating()
-        }
-    }
-
-    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        DispatchQueue.main.async {
-            self.activityIndicator.startAnimating()
-        }
-        if !response.products.isEmpty {
-            self.productArray = response.products
-            DispatchQueue.main.async {
-                self.purchaseTableView.reloadData()
-            }
-        }
-        if !response.invalidProductIdentifiers.isEmpty {
-            let errorMessage = "Failed to fetch product"
-            self.presentAlert(title: "Failed!", message: errorMessage)
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-            }
-        }
-        
-        DispatchQueue.main.async {
             self.activityIndicator.stopAnimating()
         }
     }
@@ -162,7 +131,26 @@ class PurchaseViewController: UIViewController, SKProductsRequestDelegate {
     }
     
     @objc func restorePurchaseButtonAction() {
-        // Handle button action here
+        self.activityIndicator.startAnimating()
+        IAPManager.shared.restorePurchases { restoredPurchases, restoreErrors in
+            if !restoredPurchases.isEmpty {
+                for purchase in restoredPurchases {
+                    print("Successfully restored: \(purchase.productId)")
+                }
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                }
+            }
+
+            if !restoreErrors.isEmpty {
+                for error in restoreErrors {
+                    print("Restore failed with error: \(error.localizedDescription)")
+                }
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                }
+            }
+        }
     }
 }
 
@@ -188,35 +176,35 @@ extension PurchaseViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.activityIndicator.startAnimating()
-//        IAPManager.shared.purchaseProduct(purchaseType: selectedPurchaseType!, product: productArray[indexPath.row]) { [weak self] purchaseResult in
-//            guard let self = self else { return }
-//            
-//            DispatchQueue.main.async {
-//                self.activityIndicator.stopAnimating()
-//            }
-//            
-//            var alertTitle: String = ""
-//            var alertMessage: String = ""
-//            
-//            switch purchaseResult {
-//            case .success(let purchase):
-//                alertTitle = "Successful!"
-//                alertMessage = "Successfully purchased: \(purchase.product.localizedTitle)"
-//                
-//            case .failure(let error):
-//                if error.code == .paymentCancelled {
-//                    alertTitle = "Oops!"
-//                    alertMessage = "Your purchase process is cancelled!"
-//                } else {
-//                    alertTitle = "Failed!"
-//                    alertMessage = error.localizedDescription
-//                }
-//            }
-//            
-//            DispatchQueue.main.async {
-//                self.presentAlert(title: alertTitle, message: alertMessage)
-//            }
-//        }
+        IAPManager.shared.purchaseProduct(purchaseType: selectedPurchaseType!, product: productArray[indexPath.row]) { [weak self] purchaseResult in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+            }
+            
+            var alertTitle: String = ""
+            var alertMessage: String = ""
+            
+            switch purchaseResult {
+            case .success(let purchase):
+                alertTitle = "Successful!"
+                alertMessage = "Successfully purchased: \(purchase.product.localizedTitle)"
+                
+            case .failure(let error):
+                if error.code == .paymentCancelled {
+                    alertTitle = "Oops!"
+                    alertMessage = "Your purchase process is cancelled!"
+                } else {
+                    alertTitle = "Failed!"
+                    alertMessage = error.localizedDescription
+                }
+            }
+            
+            DispatchQueue.main.async {
+                self.presentAlert(title: alertTitle, message: alertMessage)
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -225,17 +213,22 @@ extension PurchaseViewController: UITableViewDelegate, UITableViewDataSource {
                 if selectedPurchaseType == .consumable {
                     return nil
                 } else {
-                    let footerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 64))
-                    
-                    let button = UIButton(type: .system)
-                    button.setTitle("Restore in-app purchase", for: .normal)
+                    let footerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 100))
+                    let restoreButton = UIButton(type: .system)
+                    restoreButton.setTitle("Restore in-app purchase", for: .normal)
                     if let customColor = UIColor(named: "DefaultTextColour") {
-                        button.setTitleColor(customColor, for: .normal)
+                        restoreButton.setTitleColor(customColor, for: .normal)
                     }
-                    button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
-                    button.addTarget(self, action: #selector(restorePurchaseButtonAction), for: .touchUpInside)
-                    button.frame = CGRect(x: 20, y: 30, width: tableView.frame.size.width - 32, height: 44)
-                    footerView.addSubview(button)
+                    restoreButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+                    let buttonWidth: CGFloat = tableView.frame.size.width - 40
+                    let buttonHeight: CGFloat = 44
+                    let xPosition = (footerView.frame.size.width - buttonWidth) / 2
+                    let yPosition = (footerView.frame.size.height - buttonHeight) / 2
+                    
+                    restoreButton.frame = CGRect(x: xPosition, y: yPosition, width: buttonWidth, height: buttonHeight)
+                    restoreButton.addTarget(self, action: #selector(restorePurchaseButtonAction), for: .touchUpInside)
+                    footerView.addSubview(restoreButton)
+                    
                     return footerView
                 }
             }
@@ -249,7 +242,7 @@ extension PurchaseViewController: UITableViewDelegate, UITableViewDataSource {
                 if selectedPurchaseType == .consumable {
                     return 0
                 } else {
-                    return 44
+                    return 100
                 }
             }
         }

@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CD3EBE402ADE3CDA006CAC91 /* EasyPurchase in Frameworks */ = {isa = PBXBuildFile; productRef = CD3EBE3F2ADE3CDA006CAC91 /* EasyPurchase */; };
-		CD65ACC32ACD78E400FA0631 /* FetchPro.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD65ACC22ACD78E400FA0631 /* FetchPro.swift */; };
+		CD2FFFBB2AE230D6002BB36A /* CompleteTransactionControllerTests_Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2FFFBA2AE230D6002BB36A /* CompleteTransactionControllerTests_Demo.swift */; };
+		CD2FFFC02AE2540E002BB36A /* PaymentsControllerTest_Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2FFFBF2AE2540E002BB36A /* PaymentsControllerTest_Demo.swift */; };
+		CD2FFFC22AE25427002BB36A /* RestoreProductsControllerTests_Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2FFFC12AE25427002BB36A /* RestoreProductsControllerTests_Demo.swift */; };
+		CD7145292AE8EBC5006127AB /* EasyPurchase in Frameworks */ = {isa = PBXBuildFile; productRef = CD7145282AE8EBC5006127AB /* EasyPurchase */; };
 		CD77E1E82ACA723F004539CE /* AutoRenewable.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD77E1E72ACA723F004539CE /* AutoRenewable.plist */; };
 		CD77E1EA2ACA725B004539CE /* NonRenewable.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD77E1E92ACA725B004539CE /* NonRenewable.plist */; };
 		CD77E1EC2ACA726E004539CE /* Consumable.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD77E1EB2ACA726E004539CE /* Consumable.plist */; };
@@ -17,6 +19,11 @@
 		CDC6BDA22AC6A1BF00509E70 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC6BDA12AC6A1BF00509E70 /* HomeViewController.swift */; };
 		CDC6BDA72AC6A29D00509E70 /* HomeVCTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC6BDA52AC6A29D00509E70 /* HomeVCTableViewCell.swift */; };
 		CDC6BDA82AC6A29D00509E70 /* HomeVCTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDC6BDA62AC6A29D00509E70 /* HomeVCTableViewCell.xib */; };
+		CDC6C6FC2ADE866A0054CC30 /* FetchProductTests_Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC6C6FB2ADE866A0054CC30 /* FetchProductTests_Demo.swift */; };
+		CDC6C6FE2ADE868C0054CC30 /* MockPaymentQueue_Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC6C6FD2ADE868C0054CC30 /* MockPaymentQueue_Demo.swift */; };
+		CDC6C7002ADE86A00054CC30 /* MockPaymentTransaction_Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC6C6FF2ADE86A00054CC30 /* MockPaymentTransaction_Demo.swift */; };
+		CDC6C7022ADE86B50054CC30 /* MockProduct_Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC6C7012ADE86B50054CC30 /* MockProduct_Demo.swift */; };
+		CDC6C7042ADE86CF0054CC30 /* PaymentQueueControllerTests_Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC6C7032ADE86CF0054CC30 /* PaymentQueueControllerTests_Demo.swift */; };
 		CDE48D002AC6A80D00C878C5 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE48CFF2AC6A80D00C878C5 /* Constant.swift */; };
 		CDE48D032AC6C73900C878C5 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE48D022AC6C73900C878C5 /* UIView+Extension.swift */; };
 		CDE48D062AC6D64300C878C5 /* PurchaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE48D052AC6D64300C878C5 /* PurchaseViewController.swift */; };
@@ -27,7 +34,6 @@
 		CDF81E0A2AC3E6D600F5BAE2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDF81E082AC3E6D600F5BAE2 /* Main.storyboard */; };
 		CDF81E0C2AC3E6D700F5BAE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CDF81E0B2AC3E6D700F5BAE2 /* Assets.xcassets */; };
 		CDF81E0F2AC3E6D700F5BAE2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CDF81E0D2AC3E6D700F5BAE2 /* LaunchScreen.storyboard */; };
-		CDF81E1A2AC3E6D700F5BAE2 /* EasyPurchaseDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF81E192AC3E6D700F5BAE2 /* EasyPurchaseDemoTests.swift */; };
 		CDF81E242AC3E6D700F5BAE2 /* EasyPurchaseDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF81E232AC3E6D700F5BAE2 /* EasyPurchaseDemoUITests.swift */; };
 		CDF81E262AC3E6D700F5BAE2 /* EasyPurchaseDemoUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF81E252AC3E6D700F5BAE2 /* EasyPurchaseDemoUITestsLaunchTests.swift */; };
 /* End PBXBuildFile section */
@@ -50,7 +56,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		CD65ACC22ACD78E400FA0631 /* FetchPro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchPro.swift; sourceTree = "<group>"; };
+		CD2FFFBA2AE230D6002BB36A /* CompleteTransactionControllerTests_Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTransactionControllerTests_Demo.swift; sourceTree = "<group>"; };
+		CD2FFFBF2AE2540E002BB36A /* PaymentsControllerTest_Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsControllerTest_Demo.swift; sourceTree = "<group>"; };
+		CD2FFFC12AE25427002BB36A /* RestoreProductsControllerTests_Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestoreProductsControllerTests_Demo.swift; sourceTree = "<group>"; };
 		CD77E1E72ACA723F004539CE /* AutoRenewable.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AutoRenewable.plist; sourceTree = "<group>"; };
 		CD77E1E92ACA725B004539CE /* NonRenewable.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = NonRenewable.plist; sourceTree = "<group>"; };
 		CD77E1EB2ACA726E004539CE /* Consumable.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Consumable.plist; sourceTree = "<group>"; };
@@ -59,6 +67,11 @@
 		CDC6BDA12AC6A1BF00509E70 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		CDC6BDA52AC6A29D00509E70 /* HomeVCTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeVCTableViewCell.swift; sourceTree = "<group>"; };
 		CDC6BDA62AC6A29D00509E70 /* HomeVCTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeVCTableViewCell.xib; sourceTree = "<group>"; };
+		CDC6C6FB2ADE866A0054CC30 /* FetchProductTests_Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchProductTests_Demo.swift; sourceTree = "<group>"; };
+		CDC6C6FD2ADE868C0054CC30 /* MockPaymentQueue_Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPaymentQueue_Demo.swift; sourceTree = "<group>"; };
+		CDC6C6FF2ADE86A00054CC30 /* MockPaymentTransaction_Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPaymentTransaction_Demo.swift; sourceTree = "<group>"; };
+		CDC6C7012ADE86B50054CC30 /* MockProduct_Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProduct_Demo.swift; sourceTree = "<group>"; };
+		CDC6C7032ADE86CF0054CC30 /* PaymentQueueControllerTests_Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentQueueControllerTests_Demo.swift; sourceTree = "<group>"; };
 		CDE48CFF2AC6A80D00C878C5 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		CDE48D022AC6C73900C878C5 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		CDE48D052AC6D64300C878C5 /* PurchaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseViewController.swift; sourceTree = "<group>"; };
@@ -72,7 +85,6 @@
 		CDF81E0E2AC3E6D700F5BAE2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CDF81E102AC3E6D700F5BAE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CDF81E152AC3E6D700F5BAE2 /* EasyPurchaseDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EasyPurchaseDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CDF81E192AC3E6D700F5BAE2 /* EasyPurchaseDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EasyPurchaseDemoTests.swift; sourceTree = "<group>"; };
 		CDF81E1F2AC3E6D700F5BAE2 /* EasyPurchaseDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EasyPurchaseDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDF81E232AC3E6D700F5BAE2 /* EasyPurchaseDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EasyPurchaseDemoUITests.swift; sourceTree = "<group>"; };
 		CDF81E252AC3E6D700F5BAE2 /* EasyPurchaseDemoUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EasyPurchaseDemoUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -84,7 +96,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD77E1F52ACA898F004539CE /* StoreKit.framework in Frameworks */,
-				CD3EBE402ADE3CDA006CAC91 /* EasyPurchase in Frameworks */,
+				CD7145292AE8EBC5006127AB /* EasyPurchase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,8 +270,14 @@
 		CDF81E182AC3E6D700F5BAE2 /* EasyPurchaseDemoTests */ = {
 			isa = PBXGroup;
 			children = (
-				CDF81E192AC3E6D700F5BAE2 /* EasyPurchaseDemoTests.swift */,
-				CD65ACC22ACD78E400FA0631 /* FetchPro.swift */,
+				CD2FFFBA2AE230D6002BB36A /* CompleteTransactionControllerTests_Demo.swift */,
+				CDC6C6FB2ADE866A0054CC30 /* FetchProductTests_Demo.swift */,
+				CDC6C6FD2ADE868C0054CC30 /* MockPaymentQueue_Demo.swift */,
+				CDC6C6FF2ADE86A00054CC30 /* MockPaymentTransaction_Demo.swift */,
+				CDC6C7012ADE86B50054CC30 /* MockProduct_Demo.swift */,
+				CDC6C7032ADE86CF0054CC30 /* PaymentQueueControllerTests_Demo.swift */,
+				CD2FFFBF2AE2540E002BB36A /* PaymentsControllerTest_Demo.swift */,
+				CD2FFFC12AE25427002BB36A /* RestoreProductsControllerTests_Demo.swift */,
 			);
 			path = EasyPurchaseDemoTests;
 			sourceTree = "<group>";
@@ -290,7 +308,7 @@
 			);
 			name = EasyPurchaseDemo;
 			packageProductDependencies = (
-				CD3EBE3F2ADE3CDA006CAC91 /* EasyPurchase */,
+				CD7145282AE8EBC5006127AB /* EasyPurchase */,
 			);
 			productName = EasyPurchaseDemo;
 			productReference = CDF81DFF2AC3E6D600F5BAE2 /* EasyPurchaseDemo.app */;
@@ -365,7 +383,7 @@
 			);
 			mainGroup = CDF81DF62AC3E6D600F5BAE2;
 			packageReferences = (
-				CD3EBE3E2ADE3CDA006CAC91 /* XCRemoteSwiftPackageReference "EasyPurchase" */,
+				CD7145272AE8EBC5006127AB /* XCRemoteSwiftPackageReference "EasyPurchase" */,
 			);
 			productRefGroup = CDF81E002AC3E6D600F5BAE2 /* Products */;
 			projectDirPath = "";
@@ -431,8 +449,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD65ACC32ACD78E400FA0631 /* FetchPro.swift in Sources */,
-				CDF81E1A2AC3E6D700F5BAE2 /* EasyPurchaseDemoTests.swift in Sources */,
+				CDC6C6FE2ADE868C0054CC30 /* MockPaymentQueue_Demo.swift in Sources */,
+				CD2FFFC02AE2540E002BB36A /* PaymentsControllerTest_Demo.swift in Sources */,
+				CDC6C7042ADE86CF0054CC30 /* PaymentQueueControllerTests_Demo.swift in Sources */,
+				CDC6C6FC2ADE866A0054CC30 /* FetchProductTests_Demo.swift in Sources */,
+				CDC6C7002ADE86A00054CC30 /* MockPaymentTransaction_Demo.swift in Sources */,
+				CDC6C7022ADE86B50054CC30 /* MockProduct_Demo.swift in Sources */,
+				CD2FFFBB2AE230D6002BB36A /* CompleteTransactionControllerTests_Demo.swift in Sources */,
+				CD2FFFC22AE25427002BB36A /* RestoreProductsControllerTests_Demo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -772,7 +796,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		CD3EBE3E2ADE3CDA006CAC91 /* XCRemoteSwiftPackageReference "EasyPurchase" */ = {
+		CD7145272AE8EBC5006127AB /* XCRemoteSwiftPackageReference "EasyPurchase" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/BJIT-RnD/EasyPurchase.git";
 			requirement = {
@@ -783,9 +807,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		CD3EBE3F2ADE3CDA006CAC91 /* EasyPurchase */ = {
+		CD7145282AE8EBC5006127AB /* EasyPurchase */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CD3EBE3E2ADE3CDA006CAC91 /* XCRemoteSwiftPackageReference "EasyPurchase" */;
+			package = CD7145272AE8EBC5006127AB /* XCRemoteSwiftPackageReference "EasyPurchase" */;
 			productName = EasyPurchase;
 		};
 /* End XCSwiftPackageProductDependency section */
