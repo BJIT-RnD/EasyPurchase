@@ -112,4 +112,67 @@ public class EasyPurchase {
         let error = NSError(domain: SKErrorDomain, code: code.rawValue, userInfo: [NSLocalizedDescriptionKey: description])
         return SKError(_nsError: error)
     }
+
+    /// Complete transactions.
+    /// - Parameters:
+    ///   - atomically: A boolean indicating whether to complete transactions atomically.
+    ///   - completion: A closure to handle completed purchases.
+    fileprivate func completeTransactions(atomically: Bool = true, completion: @escaping ([Purchase]) -> Void) {
+        paymentQueueController.completeTransactions(ProcessedTransactions(atomically: atomically, completion: completion))
+    }
+}
+
+extension EasyPurchase {
+    /// A shared instance of EasyPurchase.
+    fileprivate static let sharedInstance = EasyPurchase()
+
+    /// Check if making payments is available.
+    public class var canMakePayments: Bool {
+        return SKPaymentQueue.canMakePayments()
+    }
+
+    /// Retrieve product information.
+    /// - Parameters:
+    ///   - productIds: Set of product identifiers.
+    ///   - completion: A closure to handle the retrieved product information.
+    /// - Returns: An in-app product request.
+    public class func fetchProducts(_ productIds: Set<String>, completion: @escaping (InAppProduct) -> Void) -> InAppProductRequest {
+        return sharedInstance.productsInfoController.fetchProductsInfo(productIds, completion: completion)
+    }
+
+    /// Purchase a product.
+    /// - Parameters:
+    ///   - purchaseType: Type of purchase.
+    ///   - product: The product to purchase.
+    ///   - quantity: The quantity to purchase.
+    ///   - completion: A closure to handle the purchase result.
+    public class func purchaseProduct(_ purchaseType: PurchaseType, product: SKProduct, quantity: Int, completion: @escaping (PurchaseResult) -> Void) {
+        sharedInstance.purchase(purchaseType: purchaseType, product: product, quantity: quantity, completion: completion)
+    }
+
+    /// Restore products.
+    /// - Parameters:
+    ///   - atomically: A boolean indicating whether to restore products atomically.
+    ///   - applicationUsername: An optional application username.
+    ///   - completion: A closure to handle the restored products results.
+    public func restoreProducts(atomically: Bool = true, applicationUsername: String = "", completion: @escaping (RestoreProductsResults) -> Void) {
+        paymentQueueController.restorePurchases(RestoreProducts(atomically: atomically, applicationUsername: applicationUsername) { results in
+            let results = self.processRestoreResults(results)
+            completion(results)
+        })
+    }
+
+    /// Complete transactions.
+    /// - Parameters:
+    ///   - atomically: A boolean indicating whether to complete transactions atomically.
+    ///   - completion: A closure to handle completed purchases.
+    public class func completeTransactions(atomically: Bool = true, completion: @escaping ([Purchase]) -> Void) {
+        sharedInstance.completeTransactions(atomically: atomically, completion: completion)
+    }
+
+    /// Finish a payment transaction.
+    /// - Parameter transaction: The payment transaction to finish.
+    public class func finishTransaction(_ transaction: PaymentTransaction) {
+        sharedInstance.finishTransaction(transaction)
+    }
 }
