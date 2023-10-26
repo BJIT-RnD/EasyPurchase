@@ -117,7 +117,15 @@ public class PaymentsController: TransactionController {
         case .deferred:
             // Transaction is in a deferred state (e.g., for family sharing)
             // Handle as needed based on your app's requirements
-            return true
+            if let purchase = findPurchase(for: transaction) {
+                payment.completion(.success(purchase: purchase))
+                paymentQueue.finishTransaction(transaction)
+                payments.remove(at: paymentIndex)
+                return true
+            } else {
+                // Handle the case when 'findPayment' returns nil
+                return false
+            }
 
         @unknown default:
             fatalError()
