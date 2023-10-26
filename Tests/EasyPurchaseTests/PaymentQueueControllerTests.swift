@@ -42,9 +42,7 @@ final class PaymentQueueControllerTests: XCTestCase {
     }
 
     func testStartPaymentSuccess() {
-        let mockTransaction = SKPaymentTransaction()
         let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
-        let transactions = [mockTransaction]
 
         let payment = mockPayment(productIdentifier: "com.bjitgroup.easypurchase.consumable.tencoin") { _ in }
         do { try mockPaymentQueueController.startPayment(payment) }
@@ -62,9 +60,7 @@ final class PaymentQueueControllerTests: XCTestCase {
     }
 
     func testPaymentQuantityGreaterThanZeroSuccess() {
-        let mockTransaction = SKPaymentTransaction()
         let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
-        let transactions = [mockTransaction]
 
         let payment = mockPayment(productIdentifier: "com.bjitgroup.easypurchase.consumable.tencoin", quantity: 1) { _ in }
         do {
@@ -84,9 +80,7 @@ final class PaymentQueueControllerTests: XCTestCase {
     }
 
     func testPaymentQuantityEqualToZeroSuccess() {
-        let mockTransaction = SKPaymentTransaction()
         let mockPaymentQueueController = PaymentQueueController(paymentQueue: mockPaymentQueue)
-        let transactions = [mockTransaction]
 
         let payment = mockPayment(productIdentifier: "com.bjitgroup.easypurchase.consumable.tencoin", quantity: 0) { _ in }
         do {
