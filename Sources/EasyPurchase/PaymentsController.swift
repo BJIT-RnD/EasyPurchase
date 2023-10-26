@@ -96,7 +96,7 @@ public class PaymentsController: TransactionController {
             return false
 
         case .failed:
-            let purchase = findPurchase(for: transaction)
+            _ = findPurchase(for: transaction)
             payment.completion(.failure(error: failedTransactionError(for: transaction.error as NSError?)))
             paymentQueue.finishTransaction(transaction)
             payments.remove(at: paymentIndex)
@@ -117,7 +117,14 @@ public class PaymentsController: TransactionController {
         case .deferred:
             // Transaction is in a deferred state (e.g., for family sharing)
             // Handle as needed based on your app's requirements
-            return true
+            if let purchase = findPurchase(for: transaction) {
+                payment.completion(.success(purchase: purchase))
+                payments.remove(at: paymentIndex)
+                return true
+            } else {
+                // Handle the case when 'findPayment' returns nil
+                return false
+            }
 
         @unknown default:
             fatalError()
