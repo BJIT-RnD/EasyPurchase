@@ -60,6 +60,20 @@ public class EasyPurchase {
             // Handle other errors here
         }
     }
+    
+    /// Restore products.
+    /// - Parameters:
+    ///   - atomically: A boolean indicating whether to restore products atomically.
+    ///   - applicationUsername: An optional application username.
+    ///   - completion: A closure to handle the restored products results.
+    fileprivate func restorePurchases(atomically: Bool = true, applicationUsername: String = "", completion: @escaping (RestoreProductsResults) -> Void) {
+
+        paymentQueueController.restorePurchases(RestoreProducts(atomically: atomically, applicationUsername: applicationUsername) { results in
+
+            let results = self.processRestoreResults(results)
+            completion(results)
+        })
+    }
 
     /// Process a purchase result.
     ///
@@ -155,11 +169,9 @@ extension EasyPurchase {
     ///   - atomically: A boolean indicating whether to restore products atomically.
     ///   - applicationUsername: An optional application username.
     ///   - completion: A closure to handle the restored products results.
-    public func restoreProducts(atomically: Bool = true, applicationUsername: String = "", completion: @escaping (RestoreProductsResults) -> Void) {
-        paymentQueueController.restorePurchases(RestoreProducts(atomically: atomically, applicationUsername: applicationUsername) { results in
-            let results = self.processRestoreResults(results)
-            completion(results)
-        })
+    public class func restorePurchases(atomically: Bool = true, applicationUsername: String = "", completion: @escaping (RestoreProductsResults) -> Void) {
+
+        sharedInstance.restorePurchases(atomically: atomically, applicationUsername: applicationUsername, completion: completion)
     }
 
     /// Complete transactions.
