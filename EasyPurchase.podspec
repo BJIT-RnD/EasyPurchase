@@ -11,10 +11,4 @@ Pod::Spec.new do |s|
   s.source_files = "Sources/EasyPurchase/**/*.swift"
   s.requires_arc = true
   s.documentation_url = "https://github.com/BJIT-RnD/EasyPurchase#readme"
-  s.test_spec "Tests" do |test_spec|
-    test_spec.source_files = "Tests/**/*.swift"
-    test_spec.requires_app_host = true
-    test_spec.libraries = "swiftSyntax" # Optional, specify any test dependencies
-    test_spec.xcconfig = { "SWIFT_ACTIVE_COMPILATION_CONDITIONS" => "UNIT_TEST" }
-  end
 end
