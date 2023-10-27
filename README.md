@@ -51,7 +51,7 @@ To install, include this in your Podfile.
 ```swift
 use_frameworks!
 
-pod 'EasyPurchase'
+pod 'EasyPurchase', '~> 1.0'
 ```
 ## App startup
 
