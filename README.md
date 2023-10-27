@@ -1,3 +1,5 @@
+<img src="https://github.com/BJIT-RnD/EasyPurchase/blob/Task_483946/EasyPurchase_icon.png" width=100%>
+
 # EasyPurchase
 A description of this package. Version v1.0.0
 
