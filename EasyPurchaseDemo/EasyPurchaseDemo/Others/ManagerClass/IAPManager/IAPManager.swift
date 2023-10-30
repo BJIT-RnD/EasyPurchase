@@ -25,8 +25,8 @@ enum PurchaseType {
     case nonConsumable
 }
 
-class IAPManager: NSObject {
-    static let shared = IAPManager()
+public class IAPManager: NSObject {
+    public static let shared = IAPManager()
     private override init() { super.init() }
     
     var productRequest:InAppProductRequest!
@@ -69,7 +69,7 @@ class IAPManager: NSObject {
                 if let retrievedProducts = productInfo.retrievedProducts {
                     completion(Array(retrievedProducts), nil)
                 } else {
-                    
+
                 }
             }
         }
@@ -81,37 +81,47 @@ class IAPManager: NSObject {
         if purchaseType == .consumable {
             quantity = 2
         }
-        
-        let payment = Payment(product: product, quantity: quantity, needToDownloadContent: true) { result in
-            completion(result)
-        }
-        
-        do {
-            try paymentQueueController.startPayment(payment)
-        } catch {
-            print("Error: \(error)")
-        }
-    }
-    
-    func restorePurchases(completion: @escaping ([Purchase], [SKError]) -> Void) {
-        let restoreConfig = RestoreProducts(atomically: true) { results in
-            var restoredPurchases: [Purchase] = []
-            var restoreErrors: [SKError] = []
 
-            for result in results {
-                switch result {
-                case .restored(let purchase):
-                    print("YES")
-                    restoredPurchases.append(purchase)
-                case .failed(let error):
-                    print("NO")
-                    restoreErrors.append(error)
-                default:
-                    break
-                }
-            }
-            completion(restoredPurchases, restoreErrors)
+        do {
+            try paymentQueueController.startPayment(Payment(product: product, quantity: quantity, needToDownloadContent: true) { result in
+
+                completion(self.processPurchaseResult(result))
+            })
         }
-        paymentQueueController.restorePurchases(restoreConfig)
+        catch let error as NSError {
+            // Handle the error and access error information
+            print("Payment failed with error: \(error.localizedDescription)")
+            print("Error code: \(error.code)")
+            print("Error domain: \(error.domain)")
+        }
+        catch {
+            // handle other errors here
+        }
     }
+    private func processPurchaseResult(_ result: PurchaseResult) -> PurchaseResult {
+        switch result {
+        case .success(purchase: let purchase):
+            return .success(purchase: purchase)
+        case .failure(error: let error):
+            return .failure(error: error)
+        }
+    }
+    private func processRestoreResults(_ results: [InAppTransactionActionsResult]) -> RestoreProductsResults {
+        var restoredPurchases: [Purchase] = []
+        var restoreFailedPurchases: [(SKError, String?)] = []
+        for result in results {
+            switch result {
+            case .purchased(let purchase):
+                let error = PurchaseViewController().storeInternalError(description: "Cannot purchase product from restore purchases path")
+            case .deferred(let purchase):
+                let error = PurchaseViewController().storeInternalError(description: "Cannot purchase product from restore purchases path")
+                //restoreFailedPurchases.append((error, purchase.productId))
+            case .failed(let error):
+                restoreFailedPurchases.append((error, nil))
+            case .restored(let purchase):
+                restoredPurchases.append(purchase)
+            }
+        }
+        return RestoreProductsResults(restoredPurchases: restoredPurchases, restoreFailedPurchases: restoreFailedPurchases)
+    }    
 }

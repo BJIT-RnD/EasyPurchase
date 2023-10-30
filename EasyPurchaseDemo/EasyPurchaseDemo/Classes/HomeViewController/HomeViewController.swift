@@ -65,7 +65,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // Determine the selected purchase type based on the row
         switch indexPath.row {
         case 0:
             selectedPurchaseType = .autoRenewable
