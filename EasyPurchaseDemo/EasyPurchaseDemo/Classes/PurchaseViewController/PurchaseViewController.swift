@@ -9,7 +9,7 @@ import UIKit
 import StoreKit
 import EasyPurchase
 
-class PurchaseViewController: UIViewController, SKProductsRequestDelegate {
+class PurchaseViewController: UIViewController {
     var selectedPurchaseType: PurchaseType?
     @IBOutlet weak var purchaseTableView: UITableView!
     var productArray = [SKProduct]()
@@ -37,25 +37,25 @@ class PurchaseViewController: UIViewController, SKProductsRequestDelegate {
         self.navigationItem.title = navigationBarTitle
     }
     
-    private func setTableViewIntheMiddle() {
-        let viewHeight = view.frame.size.height/1.5
-        let numberOfRowsInSection = CGFloat(purchaseTableView.numberOfRows(inSection: 0))
-        let headerHeight = (viewHeight - (KHomeTableViewCellHeight * numberOfRowsInSection)) / 2.0
-        purchaseTableView.contentInset = UIEdgeInsets(top: headerHeight, left: 0, bottom: -headerHeight, right: 0)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         registerTableViewCell()
         initialUISetup()
-        setTableViewIntheMiddle()
         fetchProductFromAppStore()
     }
     
+    private func presentAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    // MARK: - EP Calls
     private func fetchProductFromAppStore() {
         activityIndicator.startAnimating()
         if let selectedPurchaseType = self.selectedPurchaseType {
-            IAPManager.shared.getProducts(purchaseType: selectedPurchaseType) { [weak self] productList, error in
+            IAPManager.shared.fetchProducts(purchaseType: selectedPurchaseType) { [weak self] productList, error in
                 guard let self = self else { return }
 
                 if let error = error {
@@ -67,7 +67,7 @@ class PurchaseViewController: UIViewController, SKProductsRequestDelegate {
                 } else {
                     if let productList = productList, !productList.isEmpty {
                         self.productArray = productList
-                        //self.checkOtherSKProductAttributes(productList: self.productArray)
+                        self.checkOtherSKProductAttributes(productList: self.productArray)
                         DispatchQueue.main.async {
                             self.purchaseTableView.reloadData()
                             self.activityIndicator.stopAnimating()
@@ -81,49 +81,11 @@ class PurchaseViewController: UIViewController, SKProductsRequestDelegate {
                     }
                 }
             }
-            
-            if let productIdentifiers = IAPManager.shared.getProductIDsFromBundle(purchaseType: selectedPurchaseType), !productIdentifiers.isEmpty {
-                let request = SKProductsRequest(productIdentifiers: Set(productIdentifiers))
-                request.delegate = self
-                request.start()
-            }
-            
-            
         } else {
             let errorMessage = "Failed to fetch product"
             self.presentAlert(title: "Failed!", message: errorMessage)
             self.activityIndicator.stopAnimating()
         }
-    }
-
-    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        DispatchQueue.main.async {
-            self.activityIndicator.startAnimating()
-        }
-        if !response.products.isEmpty {
-            self.productArray = response.products
-            DispatchQueue.main.async {
-                self.purchaseTableView.reloadData()
-            }
-        }
-        if !response.invalidProductIdentifiers.isEmpty {
-            let errorMessage = "Failed to fetch product"
-            self.presentAlert(title: "Failed!", message: errorMessage)
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-            }
-        }
-        
-        DispatchQueue.main.async {
-            self.activityIndicator.stopAnimating()
-        }
-    }
-    
-    private func presentAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-        alert.addAction(okAction)
-        self.present(alert, animated: true, completion: nil)
     }
     
     private func checkOtherSKProductAttributes(productList: [SKProduct]) {
@@ -162,13 +124,86 @@ class PurchaseViewController: UIViewController, SKProductsRequestDelegate {
         }
     }
     
-    @objc func restorePurchaseButtonAction() {
-         //Handle button action here
-        EasyPurchase.restorePurchases(atomically: true) { RestoreProductsResults in
-            print(RestoreProductsResults,"results")
-            for purchase in RestoreProductsResults.restoredProductsSuccess {
-                print("purchase", purchase)
+    func handleProductPurchase(product: SKProduct) {
+        IAPManager.shared.purchaseProducts(purchaseType: selectedPurchaseType!, product: product) { [weak self] purchaseResult in
+            guard let self = self else { return }
+            
+            var alertTitle: String = ""
+            var alertMessage: String = ""
+            
+            switch purchaseResult {
+            case .success(let purchase):
+                print("product title: \(purchase.product.localizedTitle)")
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    self.navToMainViewController()
+                }
+                
+            case .failure(let error):
+                if error.code == .paymentCancelled {
+                    alertTitle = "Oops!"
+                    alertMessage = "Your purchase process is cancelled!"
+                } else {
+                    alertTitle = "Failed!"
+                    alertMessage = error.localizedDescription
+                }
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    self.presentAlert(title: alertTitle, message: alertMessage)
+                }
             }
+        }
+    }
+    
+    @objc func restorePurchaseButtonAction() {
+        self.activityIndicator.startAnimating()
+        IAPManager.shared.restoreProducts { [weak self] restoreResults in
+            guard let self = self else { return }
+            
+            var alertTitle: String = ""
+            var alertMessage: String = ""
+            
+            for restoreResult in restoreResults {
+                if restoreResult.restoredProductsFailure.count > 0 {
+                    for (error, message) in restoreResult.restoredProductsFailure {
+                        print("Failed to restore purchase with error: \(error.localizedDescription), message: \(message ?? "N/A")")
+                        alertTitle = "Failed!"
+                        alertMessage = error.localizedDescription
+                        break
+                    }
+                    DispatchQueue.main.async {
+                        self.presentAlert(title: alertTitle, message: alertMessage)
+                        self.activityIndicator.stopAnimating()
+                    }
+                } else {
+                    if restoreResult.restoredProductsSuccess.count > 0 {
+                        for purchase in restoreResult.restoredProductsSuccess {
+                            print("Restored purchase:", purchase)
+                        }
+                        DispatchQueue.main.async {
+                            self.navToMainViewController()
+                        }
+                    } else {
+                        alertTitle = "Not Found!"
+                        alertMessage = "Nothing to restore!"
+                        DispatchQueue.main.async {
+                            self.presentAlert(title: alertTitle, message: alertMessage)
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        self.activityIndicator.stopAnimating()
+                    }
+                }
+            }
+        }
+    }
+    
+    func navToMainViewController() {
+        if selectedPurchaseType == .autoRenewable || selectedPurchaseType == .nonRenewable {
+            let mainViewController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "MainViewController") as! MainViewController
+            self.navigationController?.pushViewController(mainViewController, animated: true)
+        } else {
+            //Handle UI for Non-Consumable here
         }
     }
 }
@@ -195,35 +230,7 @@ extension PurchaseViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.activityIndicator.startAnimating()
-        EasyPurchase.purchaseProduct(.nonConsumable, product: productArray[indexPath.row], quantity: 1) { [weak self] purchaseResult in
-            guard let self = self else { return }
-
-            var alertTitle: String = ""
-            var alertMessage: String = ""
-
-            switch purchaseResult {
-            case .success(let purchase):
-                alertTitle = "Successful!"
-                alertMessage = "Successfully purchased: \(purchase.product.localizedTitle)"
-                self.activityIndicator.stopAnimating()
-
-            case .failure(let error):
-                if error.code == .paymentCancelled {
-                    alertTitle = "Oops!"
-                    alertMessage = "Your purchase process is cancelled!"
-                    self.activityIndicator.stopAnimating()
-                } else {
-                    alertTitle = "Failed!"
-                    alertMessage = error.localizedDescription
-                }
-            }
-
-            DispatchQueue.main.async {
-                self.presentAlert(title: alertTitle, message: alertMessage)
-                self.activityIndicator.stopAnimating()
-            }
-
-        }
+        handleProductPurchase(product: productArray[indexPath.row])
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -262,8 +269,4 @@ extension PurchaseViewController: UITableViewDelegate, UITableViewDataSource {
         }
         return 0
     }
-    public func storeInternalError(code: SKError.Code = SKError.unknown, description: String = "") -> SKError {
-            let error = NSError(domain: SKErrorDomain, code: code.rawValue, userInfo: [ NSLocalizedDescriptionKey: description ])
-            return SKError(_nsError: error)
-        }
 }

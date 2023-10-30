@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import EasyPurchase
 
 class HomeViewController: UIViewController {
     @IBOutlet weak var homeTableView: UITableView!

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		89F7BEE52AEA22D5001B4693 /* EasyPurchaseDemoConfig.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 89F7BEE42AEA22D5001B4693 /* EasyPurchaseDemoConfig.storekit */; };
 		CD13D0412AEF5B1C00D1653A /* EasyPurchase in Frameworks */ = {isa = PBXBuildFile; productRef = CD13D0402AEF5B1C00D1653A /* EasyPurchase */; };
+		CD13D0642AEF814F00D1653A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD13D0632AEF814F00D1653A /* MainViewController.swift */; };
 		CD77E1E82ACA723F004539CE /* AutoRenewable.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD77E1E72ACA723F004539CE /* AutoRenewable.plist */; };
 		CD77E1EA2ACA725B004539CE /* NonRenewable.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD77E1E92ACA725B004539CE /* NonRenewable.plist */; };
 		CD77E1EC2ACA726E004539CE /* Consumable.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD77E1EB2ACA726E004539CE /* Consumable.plist */; };
@@ -31,6 +32,7 @@
 
 /* Begin PBXFileReference section */
 		89F7BEE42AEA22D5001B4693 /* EasyPurchaseDemoConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = EasyPurchaseDemoConfig.storekit; sourceTree = "<group>"; };
+		CD13D0632AEF814F00D1653A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		CD77E1E72ACA723F004539CE /* AutoRenewable.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AutoRenewable.plist; sourceTree = "<group>"; };
 		CD77E1E92ACA725B004539CE /* NonRenewable.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = NonRenewable.plist; sourceTree = "<group>"; };
 		CD77E1EB2ACA726E004539CE /* Consumable.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Consumable.plist; sourceTree = "<group>"; };
@@ -66,6 +68,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CD13D0622AEF812700D1653A /* MainViewController */ = {
+			isa = PBXGroup;
+			children = (
+				CD13D0632AEF814F00D1653A /* MainViewController.swift */,
+			);
+			path = MainViewController;
+			sourceTree = "<group>";
+		};
 		CD77E1E62ACA6DB9004539CE /* Others */ = {
 			isa = PBXGroup;
 			children = (
@@ -110,6 +120,7 @@
 				CDC6BDA42AC6A27200509E70 /* TableViewCells */,
 				CDC6BDA32AC6A26A00509E70 /* HomeViewController */,
 				CDE48D042AC6D60A00C878C5 /* PurchaseViewController */,
+				CD13D0622AEF812700D1653A /* MainViewController */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -303,6 +314,7 @@
 				CDC6BDA22AC6A1BF00509E70 /* HomeViewController.swift in Sources */,
 				CDC6BDA72AC6A29D00509E70 /* HomeVCTableViewCell.swift in Sources */,
 				CDE48D032AC6C73900C878C5 /* UIView+Extension.swift in Sources */,
+				CD13D0642AEF814F00D1653A /* MainViewController.swift in Sources */,
 				CDE48D002AC6A80D00C878C5 /* Constant.swift in Sources */,
 				CDE48D062AC6D64300C878C5 /* PurchaseViewController.swift in Sources */,
 			);
