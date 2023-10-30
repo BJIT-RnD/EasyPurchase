@@ -1,0 +1,250 @@
+{
+  "identifier" : "868ECEA6",
+  "nonRenewingSubscriptions" : [
+    {
+      "displayPrice" : "29.99",
+      "familyShareable" : false,
+      "internalID" : "6466401727",
+      "localizations" : [
+        {
+          "description" : "NonRenew Subscription 1 month",
+          "displayName" : "Monthly Plan",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.bjitgroup.easypurchase.nonRenewable.thirty",
+      "referenceName" : "NonRenewable Subscription 1 month",
+      "type" : "NonRenewingSubscription"
+    },
+    {
+      "displayPrice" : "19.99",
+      "familyShareable" : false,
+      "internalID" : "6466401262",
+      "localizations" : [
+        {
+          "description" : "NonRenew Subscription 1 week",
+          "displayName" : "Weekly Plan",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.bjitgroup.easypurchase.nonRenewable.twenty",
+      "referenceName" : "NonRenewable Subscription 1 week",
+      "type" : "NonRenewingSubscription"
+    },
+    {
+      "displayPrice" : "39.99",
+      "familyShareable" : false,
+      "internalID" : "6466402305",
+      "localizations" : [
+        {
+          "description" : "NonRenew Subscription 1 year",
+          "displayName" : "Yearly Plan",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.bjitgroup.easypurchase.nonRenewable.forty",
+      "referenceName" : "NonRenewable Subscription 1 year",
+      "type" : "NonRenewingSubscription"
+    }
+  ],
+  "products" : [
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : true,
+      "internalID" : "6466387255",
+      "localizations" : [
+        {
+          "description" : "Level one",
+          "displayName" : "Level 1",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.bjitgroup.easypurchase.nonconsumable.levelone",
+      "referenceName" : "Level one",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "3.99",
+      "familyShareable" : false,
+      "internalID" : "6466387459",
+      "localizations" : [
+        {
+          "description" : "Level Three",
+          "displayName" : "Level 3",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.bjitgroup.easypurchase.nonconsumable.levelthree",
+      "referenceName" : "Level Threee",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "6466387396",
+      "localizations" : [
+        {
+          "description" : "Level Two",
+          "displayName" : "Level 2",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.bjitgroup.easypurchase.nonconsumable.leveltwo",
+      "referenceName" : "Level two",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "6466386969",
+      "localizations" : [
+        {
+          "description" : "10 Coins",
+          "displayName" : "10 Coins",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.bjitgroup.easypurchase.consumable.tencoin",
+      "referenceName" : "Ten coins",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "6466386992",
+      "localizations" : [
+        {
+          "description" : "30 Coins",
+          "displayName" : "30 Coins",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.bjitgroup.easypurchase.consumable.thirtycoin",
+      "referenceName" : "Thirty Coins",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "6466387016",
+      "localizations" : [
+        {
+          "description" : "20 Coins",
+          "displayName" : "20 Coins",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.bjitgroup.easypurchase.consumable.twentycoin",
+      "referenceName" : "Twenty Coins",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6466373714",
+    "_askToBuyEnabled" : true,
+    "_billingGracePeriodEnabled" : true,
+    "_billingIssuesEnabled" : false,
+    "_developerTeamID" : "2BL4KQW6R5",
+    "_failTransactionsEnabled" : true,
+    "_lastSynchronizedDate" : 719987420.05249596,
+    "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : true,
+    "_storefront" : "USA",
+    "_storeKitError" : 0
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21387997",
+      "localizations" : [
+
+      ],
+      "name" : "auto-renew",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "3.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6466375346",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Auto Renew Monthly Subscription",
+              "displayName" : "Monthly Plan",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.bjitgroup.easypurchase.autorenewmonthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "autorenewmonthly",
+          "subscriptionGroupID" : "21387997",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "1.99",
+          "familyShareable" : true,
+          "groupNumber" : 1,
+          "internalID" : "6466374965",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Auto Renew Weekly Subscription",
+              "displayName" : "Weekly Plan",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.bjitgroup.easypurchase.autorenewweekly",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "autorenewweekly",
+          "subscriptionGroupID" : "21387997",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "19.99",
+          "familyShareable" : true,
+          "groupNumber" : 3,
+          "internalID" : "6466375913",
+          "introductoryOffer" : {
+            "internalID" : "6D82882E",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "AutoRenew Yearly Subscription",
+              "displayName" : "Yearly Plan",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.bjitgroup.easypurchase.autorenewyearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "autorenewyearly",
+          "subscriptionGroupID" : "21387997",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}

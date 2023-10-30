@@ -7,8 +7,9 @@
 
 import UIKit
 import StoreKit
+import EasyPurchase
 
-class PurchaseViewController: UIViewController {
+class PurchaseViewController: UIViewController, SKProductsRequestDelegate {
     var selectedPurchaseType: PurchaseType?
     @IBOutlet weak var purchaseTableView: UITableView!
     var productArray = [SKProduct]()
@@ -80,9 +81,40 @@ class PurchaseViewController: UIViewController {
                     }
                 }
             }
+            
+            if let productIdentifiers = IAPManager.shared.getProductIDsFromBundle(purchaseType: selectedPurchaseType), !productIdentifiers.isEmpty {
+                let request = SKProductsRequest(productIdentifiers: Set(productIdentifiers))
+                request.delegate = self
+                request.start()
+            }
+            
+            
         } else {
             let errorMessage = "Failed to fetch product"
             self.presentAlert(title: "Failed!", message: errorMessage)
+            self.activityIndicator.stopAnimating()
+        }
+    }
+
+    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+        DispatchQueue.main.async {
+            self.activityIndicator.startAnimating()
+        }
+        if !response.products.isEmpty {
+            self.productArray = response.products
+            DispatchQueue.main.async {
+                self.purchaseTableView.reloadData()
+            }
+        }
+        if !response.invalidProductIdentifiers.isEmpty {
+            let errorMessage = "Failed to fetch product"
+            self.presentAlert(title: "Failed!", message: errorMessage)
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+            }
+        }
+        
+        DispatchQueue.main.async {
             self.activityIndicator.stopAnimating()
         }
     }
@@ -131,24 +163,11 @@ class PurchaseViewController: UIViewController {
     }
     
     @objc func restorePurchaseButtonAction() {
-        self.activityIndicator.startAnimating()
-        IAPManager.shared.restorePurchases { restoredPurchases, restoreErrors in
-            if !restoredPurchases.isEmpty {
-                for purchase in restoredPurchases {
-                    print("Successfully restored: \(purchase.productId)")
-                }
-                DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                }
-            }
-
-            if !restoreErrors.isEmpty {
-                for error in restoreErrors {
-                    print("Restore failed with error: \(error.localizedDescription)")
-                }
-                DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                }
+         //Handle button action here
+        EasyPurchase.restorePurchases(atomically: true) { RestoreProductsResults in
+            print(RestoreProductsResults,"results")
+            for purchase in RestoreProductsResults.restoredProductsSuccess {
+                print("purchase", purchase)
             }
         }
     }
@@ -176,34 +195,34 @@ extension PurchaseViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.activityIndicator.startAnimating()
-        IAPManager.shared.purchaseProduct(purchaseType: selectedPurchaseType!, product: productArray[indexPath.row]) { [weak self] purchaseResult in
+        EasyPurchase.purchaseProduct(.nonConsumable, product: productArray[indexPath.row], quantity: 1) { [weak self] purchaseResult in
             guard let self = self else { return }
-            
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-            }
-            
+
             var alertTitle: String = ""
             var alertMessage: String = ""
-            
+
             switch purchaseResult {
             case .success(let purchase):
                 alertTitle = "Successful!"
                 alertMessage = "Successfully purchased: \(purchase.product.localizedTitle)"
-                
+                self.activityIndicator.stopAnimating()
+
             case .failure(let error):
                 if error.code == .paymentCancelled {
                     alertTitle = "Oops!"
                     alertMessage = "Your purchase process is cancelled!"
+                    self.activityIndicator.stopAnimating()
                 } else {
                     alertTitle = "Failed!"
                     alertMessage = error.localizedDescription
                 }
             }
-            
+
             DispatchQueue.main.async {
                 self.presentAlert(title: alertTitle, message: alertMessage)
+                self.activityIndicator.stopAnimating()
             }
+
         }
     }
     
@@ -214,21 +233,16 @@ extension PurchaseViewController: UITableViewDelegate, UITableViewDataSource {
                     return nil
                 } else {
                     let footerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 100))
-                    let restoreButton = UIButton(type: .system)
-                    restoreButton.setTitle("Restore in-app purchase", for: .normal)
+                    
+                    let button = UIButton(type: .system)
+                    button.setTitle("Restore in-app purchase", for: .normal)
                     if let customColor = UIColor(named: "DefaultTextColour") {
-                        restoreButton.setTitleColor(customColor, for: .normal)
+                        button.setTitleColor(customColor, for: .normal)
                     }
-                    restoreButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
-                    let buttonWidth: CGFloat = tableView.frame.size.width - 40
-                    let buttonHeight: CGFloat = 44
-                    let xPosition = (footerView.frame.size.width - buttonWidth) / 2
-                    let yPosition = (footerView.frame.size.height - buttonHeight) / 2
-                    
-                    restoreButton.frame = CGRect(x: xPosition, y: yPosition, width: buttonWidth, height: buttonHeight)
-                    restoreButton.addTarget(self, action: #selector(restorePurchaseButtonAction), for: .touchUpInside)
-                    footerView.addSubview(restoreButton)
-                    
+                    button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+                    button.addTarget(self, action: #selector(restorePurchaseButtonAction), for: .touchUpInside)
+                    button.frame = CGRect(x: 20, y: 30, width: tableView.frame.size.width - 32, height: 44)
+                    footerView.addSubview(button)
                     return footerView
                 }
             }
@@ -248,4 +262,8 @@ extension PurchaseViewController: UITableViewDelegate, UITableViewDataSource {
         }
         return 0
     }
+    public func storeInternalError(code: SKError.Code = SKError.unknown, description: String = "") -> SKError {
+            let error = NSError(domain: SKErrorDomain, code: code.rawValue, userInfo: [ NSLocalizedDescriptionKey: description ])
+            return SKError(_nsError: error)
+        }
 }
