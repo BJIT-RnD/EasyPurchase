@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import EasyPurchase
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,6 +16,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // This method is called when the app finishes launching.
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        EasyPurchase.completeTransactions(atomically: false) { purchases in
+                    for purchase in purchases {
+                        switch purchase.transaction.transactionState {
+                        case .purchased, .restored:
+                            if purchase.needsFinishTransaction {
+                                EasyPurchase.finishTransaction(purchase.transaction)
+                            }
+                        case .failed, .purchasing, .deferred:
+                            break
+                        @unknown default:
+                            break
+                        }
+                    }
+                }
         return true
     }
     

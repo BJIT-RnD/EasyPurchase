@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "easypurchase",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BJIT-RnD/EasyPurchase.git",
+      "state" : {
+        "revision" : "9314eefa209134854323913e4d88607825b1778c",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 2
+}
