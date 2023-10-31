@@ -6,7 +6,7 @@ Pod::Spec.new do |spec|
   spec.homepage      = "https://github.com/BJIT-RnD/EasyPurchase.git"
   spec.license       = "MIT"
   spec.author        = { "BJIT" => "rnd@bjitgroup.com" }
-  spec.documentation_url = "https://github.com/BJIT-RnD/EasyPurchase#readme"
+  spec.documentation_url = "https://github.com/BJIT-RnD/EasyPurchase#cocoapods"
   spec.platform      = :ios, "11.0"
   spec.source        = { :git => "https://github.com/BJIT-RnD/EasyPurchase.git", :tag => "1.0.0" }
   spec.source_files  = "Sources/EasyPurchase/**/*"
