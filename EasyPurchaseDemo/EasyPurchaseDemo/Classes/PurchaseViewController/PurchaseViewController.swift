@@ -260,7 +260,7 @@ extension PurchaseViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if section == 0 {
             if productArray.count > 0 {
-                if selectedPurchaseType == .consumable {
+                if selectedPurchaseType == .consumable || selectedPurchaseType == .nonRenewable {
                     return 0
                 } else {
                     return 100
