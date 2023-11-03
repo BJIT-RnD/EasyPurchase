@@ -172,7 +172,7 @@ extension PaymentQueueController: SKPaymentTransactionObserver {
     */
     public func restorePurchases(_ restorePurchases: RestoreProducts) {
 
-        if restoreProductsController.restoreProducts == nil {
+        if restoreProductsController.restoreProducts != nil {
             return
         }
 
