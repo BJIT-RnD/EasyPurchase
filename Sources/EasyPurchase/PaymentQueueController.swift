@@ -171,11 +171,6 @@ extension PaymentQueueController: SKPaymentTransactionObserver {
      It is essential to ensure that this function is invoked when users explicitly request to restore their previous in-app purchases, allowing them to recover their purchased content. Additionally, it assumes that a valid 'RestoreProducts' configuration is provided for a seamless restoration process.
     */
     public func restorePurchases(_ restorePurchases: RestoreProducts) {
-
-        if restoreProductsController.restoreProducts != nil {
-            return
-        }
-
         paymentQueue.restoreCompletedTransactions(withApplicationUsername: restorePurchases.appUserName)
 
         restoreProductsController.restoreProducts = restorePurchases
