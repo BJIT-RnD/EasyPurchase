@@ -192,4 +192,17 @@ extension PaymentQueueController: SKPaymentTransactionObserver {
     public func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
         restoreProductsController.restoreCompletedTransactionsFinished()
     }
+
+    /**
+     Signals the failure to restore in-app transactions within the payment queue.
+
+     - Parameters:
+     - queue: The 'SKPaymentQueue' instance representing the payment queue's state.
+     - error: An 'Error' object containing information about the restoration failure.
+
+     This function is automatically triggered when the payment queue encounters an error while attempting to restore completed in-app transactions. It promptly calls the 'restoreCompletedTransactionsFailed(withError:)' method on the 'restoreProductsController' object to handle the error and perform any necessary error-handling tasks.
+     */
+    public func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
+        restoreProductsController.restoreCompletedTransactionsFailed(withError: error)
+    }
 }
