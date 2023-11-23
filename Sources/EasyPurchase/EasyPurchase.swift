@@ -154,6 +154,9 @@ extension EasyPurchase {
         return sharedInstance.productsInfoController.fetchProductsInfo(productIds, completion: completion)
     }
 
+    public class func refreshReceipt(completion: @escaping (RefreshReceiptStatus) -> Void) -> InAppProductRequest {
+        return sharedInstance.productsInfoController.refreshReceipt(completion: completion)
+    }
     /// Purchase a product.
     /// - Parameters:
     ///   - purchaseType: Type of purchase.

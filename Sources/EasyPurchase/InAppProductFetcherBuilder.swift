@@ -8,7 +8,7 @@ import Foundation
 import StoreKit
 // Define a typealias for a product completion handler closure.
 public typealias ProductCompletionHandler = (InAppProduct) -> Void
-
+public typealias RefreshCompletionHandler = (RefreshReceiptStatus) -> Void
 // MARK: Protocols
 
 // A protocol for a product request builder.
@@ -32,6 +32,9 @@ public class InAppProductFetcherBuilder: FetchProductBuilder {
     public func request(productIds: Set<String>, callback: @escaping ProductCompletionHandler) -> InAppProductRequest {
         // Create and return an `InAppProductRequest` with the provided product IDs and callback.
         return FetchProduct(productIds: productIds, productCompletionHandler: callback)
+    }
+    public func requestReceipt(callback: @escaping RefreshCompletionHandler) -> InAppProductRequest {
+        return FetchProduct(receiptCompletionHandler: callback)
     }
 }
 

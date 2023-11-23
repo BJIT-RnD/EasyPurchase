@@ -25,8 +25,9 @@ public protocol InAppProductRequest: InAppRequestActions {
 /// A class responsible for fetching in-app products from the Apple Store and managing the product request lifecycle.
 class FetchProduct : NSObject, InAppProductRequest {
     var productCompletionHandler: ProductCompletionHandler?
+    var refreshCompletionHandler: RefreshCompletionHandler?
     var productRequest: SKProductsRequest?
-
+    var receiptRequest: SKReceiptRefreshRequest?
     var isCompleted: Bool = false
     var cachedProducts: InAppProduct?
 
@@ -39,6 +40,13 @@ class FetchProduct : NSObject, InAppProductRequest {
         self.productCompletionHandler = productCompletionHandler
         productRequest = SKProductsRequest(productIdentifiers: productIds)
         productRequest?.delegate = self
+    }
+    init(receiptCompletionHandler: @escaping RefreshCompletionHandler) {
+        super.init()
+        self.refreshCompletionHandler = receiptCompletionHandler
+        receiptRequest = SKReceiptRefreshRequest()
+        receiptRequest?.delegate = self
+        receiptRequest?.start()
     }
 
     // Method to start the product request
@@ -67,12 +75,29 @@ extension FetchProduct: SKProductsRequestDelegate {
         productCompletionHandler?(products)
         productRequest = nil
     }
+    
+    func requestDidFinish(_ request: SKRequest) {
+        if request is SKReceiptRefreshRequest {
+            guard let handler = refreshCompletionHandler else {
+                return
+            }
+            handler(RefreshReceiptStatus(status: .success))
+            print("Here")
+        }
+    }
 
     /// Called when an SKRequest encounters an error during execution.
     /// - Parameters:
     ///   - request: The SKRequest that encountered an error.
     ///   - error: The error that occurred during the request.
     func request(_ request: SKRequest, didFailWithError error: Error) {
+        if request is SKReceiptRefreshRequest {
+            guard let handler = refreshCompletionHandler else {
+                return
+            }
+            handler(RefreshReceiptStatus(status: .failed))
+            return
+        }
         let products = InAppProduct(retrievedProducts: nil, invalidProductIDs: nil, error: error)
         cachedProducts = products
         isCompleted = true

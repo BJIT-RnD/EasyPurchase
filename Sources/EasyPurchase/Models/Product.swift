@@ -22,4 +22,13 @@ public struct InAppProduct {
     public let error: Error?
 }
 
+// A struct to represent the result of a product retrieval operation.
+public struct RefreshReceiptStatus {
+    public let status: Result
+}
+
+public enum Result {
+    case success
+    case failed
+}
 

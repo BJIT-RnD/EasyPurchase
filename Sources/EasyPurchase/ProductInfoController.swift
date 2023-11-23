@@ -33,4 +33,8 @@ public class ProductInfoController: NSObject, ProductsInfoHandler {
         // Use the builder to create the request, passing in the product IDs and completion closure.
         return fetchProductBuilder.request(productIds: productIds, callback: completion)
     }
+    
+    public func refreshReceipt(completion: @escaping (RefreshReceiptStatus) -> Void) -> InAppProductRequest {
+        return fetchProductBuilder.requestReceipt(callback: completion)
+    }
 }
