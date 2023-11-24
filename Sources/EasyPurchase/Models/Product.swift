@@ -24,11 +24,9 @@ public struct InAppProduct {
 
 // A struct to represent the result of a product retrieval operation.
 public struct RefreshReceiptStatus {
-    public let status: Result
+    public let error: refreshError?
 }
-
-public enum Result {
-    case success
-    case failed
+public enum refreshError: Error {
+    case RefreshFailed
 }
 

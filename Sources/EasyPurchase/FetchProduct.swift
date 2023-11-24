@@ -41,9 +41,13 @@ class FetchProduct : NSObject, InAppProductRequest {
         productRequest = SKProductsRequest(productIdentifiers: productIds)
         productRequest?.delegate = self
     }
-    init(receiptCompletionHandler: @escaping RefreshCompletionHandler) {
+    
+    /// Initializes a FetchProduct instance with a closure to handle the completion of an app receipt refresh request.
+    /// - Parameters:
+    ///   - refreshCompletionHandler: A closure to be called when the app receipt refresh request is completed.
+    init(refreshCompletionHandler: @escaping RefreshCompletionHandler) {
         super.init()
-        self.refreshCompletionHandler = receiptCompletionHandler
+        self.refreshCompletionHandler = refreshCompletionHandler
         receiptRequest = SKReceiptRefreshRequest()
         receiptRequest?.delegate = self
         receiptRequest?.start()
@@ -81,8 +85,9 @@ extension FetchProduct: SKProductsRequestDelegate {
             guard let handler = refreshCompletionHandler else {
                 return
             }
-            handler(RefreshReceiptStatus(status: .success))
-            print("Here")
+            handler(RefreshReceiptStatus(error: nil))
+            refreshCompletionHandler = nil
+            receiptRequest?.cancel()
         }
     }
 
@@ -91,11 +96,17 @@ extension FetchProduct: SKProductsRequestDelegate {
     ///   - request: The SKRequest that encountered an error.
     ///   - error: The error that occurred during the request.
     func request(_ request: SKRequest, didFailWithError error: Error) {
+        // Check if the request is a refresh request for the app receipt.
         if request is SKReceiptRefreshRequest {
+            // Ensure that a refresh completion handler is available.
             guard let handler = refreshCompletionHandler else {
                 return
             }
-            handler(RefreshReceiptStatus(status: .failed))
+            // Call the refresh completion handler with a RefreshReceiptStatus indicating a refresh failure.
+            handler(RefreshReceiptStatus(error: .RefreshFailed))
+            // Reset the refresh completion handler to avoid multiple invocations.
+            refreshCompletionHandler = nil
+            receiptRequest?.cancel()
             return
         }
         let products = InAppProduct(retrievedProducts: nil, invalidProductIDs: nil, error: error)

@@ -33,8 +33,12 @@ public class InAppProductFetcherBuilder: FetchProductBuilder {
         // Create and return an `InAppProductRequest` with the provided product IDs and callback.
         return FetchProduct(productIds: productIds, productCompletionHandler: callback)
     }
+    /// Request the app's receipt for in-app purchases.
+    /// - Parameters:
+    ///   - callback: A closure to handle the receipt request completion.
+    /// - Returns: An `InAppProductRequest` object representing the request for the app's receipt.
     public func requestReceipt(callback: @escaping RefreshCompletionHandler) -> InAppProductRequest {
-        return FetchProduct(receiptCompletionHandler: callback)
+        return FetchProduct(refreshCompletionHandler: callback)
     }
 }
 

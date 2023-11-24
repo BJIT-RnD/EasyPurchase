@@ -153,7 +153,10 @@ extension EasyPurchase {
     public class func fetchProducts(_ productIds: Set<String>, completion: @escaping (InAppProduct) -> Void) -> InAppProductRequest {
         return sharedInstance.productsInfoController.fetchProductsInfo(productIds, completion: completion)
     }
-
+    /// Refresh the app's receipt for in-app purchases.
+    /// - Parameters:
+    ///   - completion: A closure to handle the refresh receipt result.
+    /// - Returns: An `InAppProductRequest` object representing the request for refreshing the receipt.
     public class func refreshReceipt(completion: @escaping (RefreshReceiptStatus) -> Void) -> InAppProductRequest {
         return sharedInstance.productsInfoController.refreshReceipt(completion: completion)
     }
